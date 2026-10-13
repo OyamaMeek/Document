@@ -9,9 +9,10 @@
 ## 当前任务已执行检查
 
 - 新增 3 项先失败，实现后全部 12 项 Python 集成测试通过。
-- 实际仓库 36 个文件的链接、层级、大小及稳定生成正确，JavaScript 语法与 actionlint 通过。
-- 7 组真实浏览器行为检查通过，包含真实鼠标右键、Clipboard API 写入及系统剪贴板粘贴核对；记录为 `.agent/validation/root-links-browser-result.json`。
-- 实际 HTTP Permissions-Policy 限制下验证复制拒绝提示，发现手动链接输入框滚动关闭菜单；已修正关闭条件与焦点滚动。浏览器已由用户接管，此修正尚未复测。
+- 实际仓库 36 个文件的相对链接、直链、层级、大小及稳定生成正确，JavaScript 语法、actionlint 和 git diff --check 通过。
+- 8 组真实浏览器行为检查通过，包含真实鼠标右键、Clipboard API 写入及系统剪贴板粘贴核对；记录为 `.agent/validation/root-links-browser-result.json`。
+- 手动链接输入框滚动关闭菜单的问题已修正；实际 HTTP Permissions-Policy 限制下，自动复制拒绝提示、链接选中及手动复制粘贴复测通过。测试空间已关闭。
+- 提交 `66b7f98` 已普通推送，远端哈希一致；[Actions 运行 38428277978](https://github.com/OyamaMeek/Document/actions/runs/38428277978) 完成且结论为 `success`。
 
 # 已完成：网盘式索引验证标准
 

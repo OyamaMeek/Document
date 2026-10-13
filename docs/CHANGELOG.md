@@ -63,13 +63,14 @@
   - 文件右键提供复制直链，支持 Shift+F10、Escape、焦点恢复和成功提示；自动复制失败时显示可手动复制的链接。
   - 修改生成器与源模板，现有 Actions 每次 push 自动使用这些功能。
   - 验证：新增 3 项测试先失败，实现后全部 12 项 Python 测试通过；36 个实际文件的链接、层级、大小和重复生成正确，JavaScript 语法与 actionlint 通过。
-  - 真实浏览器：7 组主要交互检查通过，包含实际右键复制与系统剪贴板粘贴核对，未截图。
-  - 受限复制场景发现长链接选中时输入框滚动关闭菜单，已修正；浏览器测试空间由用户接管，此修正尚未复测。
+  - 真实浏览器：8 组交互检查通过，包含实际右键复制与系统剪贴板粘贴核对，未截图。
+  - 修正长链接选中时输入框滚动关闭菜单；在真实 HTTP Permissions-Policy 限制下，拒绝提示、链接选中和手动复制粘贴复测通过。
+  - 云端：[Actions 运行 38428277978](https://github.com/OyamaMeek/Document/actions/runs/38428277978) 完成且结论为 `success`，已使用更新后的生成器与模板。
 
 - **涉及文件**：
   - `scripts/generate_index.py`、`scripts/index.template.html`、`tests/test_generate_index.py`、`index.html`
   - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
 
-- **Git 提交**：待提交。
+- **Git 提交**：`66b7f98 feat: add root folder and copy file direct links`，已普通推送至 `origin/main`，远端哈希一致；哈希与复测结果通过后续文档提交保存。
 
 ---

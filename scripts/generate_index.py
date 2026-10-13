@@ -1,7 +1,7 @@
 import subprocess
 from html import escape
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, urlsplit
 
 
 FILE_TYPES = {
@@ -24,7 +24,7 @@ FILE_TYPES = {
 }
 
 
-def render_tree(tree, prefix=""):
+def render_tree(tree, direct_base, prefix=""):
     lines = ["<ul>"]
     entries = sorted(
         tree.items(), key=lambda item: (item[1] is None, item[0].casefold(), item[0])
@@ -35,7 +35,8 @@ def render_tree(tree, prefix=""):
         if children is None:
             file_type, icon = FILE_TYPES.get(Path(name).suffix.lower(), ("文件", "file"))
             size = "" if path == "index.html" else str(Path(path).stat().st_size)
-            action = f'<a class="file-row" href="./{quote(path, safe="/")}">'
+            encoded_path = quote(path, safe="/")
+            action = f'<a class="file-row" href="./{encoded_path}" data-direct-url="{escape(direct_base + encoded_path)}">'
             metadata = f'data-kind="file" data-type="{file_type}" data-size="{size}"'
             size_label = f"{int(size):,} B" if size else "—"
         else:
@@ -55,13 +56,26 @@ def render_tree(tree, prefix=""):
             lines.append("</a></li>")
         else:
             lines.append("</summary>")
-            lines.append(render_tree(children, path + "/"))
+            lines.append(render_tree(children, direct_base, path + "/"))
             lines.append("</details></li>")
     lines.append("</ul>")
     return "\n".join(lines)
 
 
 def generate_index():
+    remote = subprocess.run(
+        ["git", "remote", "get-url", "origin"], check=True, capture_output=True, text=True
+    ).stdout.strip()
+    if remote.startswith("git@github.com:"):
+        remote = "https://github.com/" + remote[len("git@github.com:"):]
+    remote_url = urlsplit(remote)
+    repository = remote_url.path.strip("/").removesuffix(".git")
+    if remote_url.hostname != "github.com" or len(repository.split("/")) != 2:
+        raise ValueError("origin 必须指向 GitHub 的 owner/repository，才能生成文件直链。")
+    branch = subprocess.run(
+        ["git", "symbolic-ref", "--short", "HEAD"], check=True, capture_output=True, text=True
+    ).stdout.strip()
+    direct_base = f'https://raw.githubusercontent.com/{quote(repository, safe="/")}/refs/heads/{quote(branch, safe="")}/'
     result = subprocess.run(
         ["git", "ls-files", "-z"], check=True, capture_output=True
     )
@@ -76,7 +90,7 @@ def generate_index():
 
     template = Path(__file__).with_name("index.template.html").read_text(encoding="utf-8")
     page = template.replace("<!-- FILE_COUNT -->", str(len(paths))).replace(
-        "<!-- FILE_TREE -->", render_tree(tree)
+        "<!-- FILE_TREE -->", render_tree(tree, direct_base)
     )
     Path("index.html").write_text(page, encoding="utf-8")
     print(f"已生成 index.html，共 {len(paths)} 个文件。")

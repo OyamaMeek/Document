@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import quote, unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +19,7 @@ class FileTreeParser(HTMLParser):
         self.open_directories = 0
         self.entries = {}
         self.controls = {}
+        self.direct_links = {}
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
@@ -31,6 +32,7 @@ class FileTreeParser(HTMLParser):
             self.open_directories += "open" in attributes
         if tag == "a":
             self.links.append((attributes["href"], self.depth))
+            self.direct_links[attributes["href"]] = attributes.get("data-direct-url")
 
     def handle_endtag(self, tag):
         if tag == "details":
@@ -45,6 +47,7 @@ class GenerateIndexTests(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.repository = Path(self.directory.name)
         self.git("init", "--quiet")
+        self.git("remote", "add", "origin", "https://github.com/OyamaMeek/Document.git")
 
     def git(self, *args):
         result = subprocess.run(
@@ -158,6 +161,34 @@ class GenerateIndexTests(unittest.TestCase):
         self.assertEqual(parser.controls["file-search"]["aria-label"], "搜索全部文件和文件夹")
         self.assertEqual(parser.controls["breadcrumbs"]["aria-label"], "当前位置")
         self.assertEqual(parser.controls["folder-up"]["aria-label"], "返回上级目录")
+
+    def test_virtual_root_and_copy_controls_are_generated(self):
+        self.track("root/inside.txt")
+        self.track("outside.txt")
+        _, parser = self.generate()
+        self.assertIn("root-folder", parser.controls)
+        self.assertIn("data-root", parser.controls["root-folder"])
+        self.assertEqual(parser.controls["file-menu"]["role"], "menu")
+        self.assertEqual(parser.controls["copy-link"]["role"], "menuitem")
+        self.assertEqual(parser.controls["manual-link"]["readonly"], None)
+        self.assertCountEqual(parser.links, [("./root/inside.txt", 1), ("./outside.txt", 0)])
+
+    def test_direct_links_use_current_branch_and_encoded_file_paths(self):
+        self.git("symbolic-ref", "HEAD", "refs/heads/feature/中文")
+        name = '资料/<报告> & "a" #?%.pdf'
+        self.track(name)
+        self.track("root.md")
+        _, parser = self.generate()
+        base = "https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/feature%2F%E4%B8%AD%E6%96%87/"
+        for path in (name, "root.md"):
+            self.assertEqual(parser.direct_links["./" + quote(path, safe="/")], base + quote(path, safe="/"))
+
+    def test_direct_links_support_ssh_github_origin(self):
+        self.git("remote", "set-url", "origin", "git@github.com:OyamaMeek/Document.git")
+        self.git("symbolic-ref", "HEAD", "refs/heads/main")
+        self.track("hello.txt")
+        _, parser = self.generate()
+        self.assertEqual(parser.direct_links["./hello.txt"], "https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/hello.txt")
 
 
 if __name__ == "__main__":

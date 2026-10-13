@@ -81,6 +81,12 @@
     .file-parent { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: .1rem; font-size: .7rem; color: var(--muted); }
     .row-type, .row-size { color: var(--muted); font-size: .74rem; }
     .row-size { font-variant-numeric: tabular-nums; }
+    .file-menu { position: fixed; z-index: 10; width: min(18rem, calc(100vw - 1rem)); padding: .4rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--chrome); backdrop-filter: blur(20px); box-shadow: 0 .5rem 2rem #0002; }
+    .file-menu button { width: 100%; min-height: 2.5rem; padding: .5rem .75rem; border: 0; border-radius: .45rem; text-align: left; color: var(--text); background: transparent; font-size: .84rem; }
+    .file-menu button:hover, .file-menu button:focus-visible { color: var(--blue); background: var(--selected); }
+    .file-menu input { width: 100%; padding: .5rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--surface); color: var(--text); font-size: .75rem; }
+    .copy-status { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 11; max-width: calc(100vw - 2rem); padding: .65rem 1rem; border-radius: .7rem; background: var(--text); color: var(--surface); font-size: .8rem; }
+    .copy-status:empty { display: none; }
     .empty-state { padding: 4rem 1rem; text-align: center; color: var(--muted); }
     .empty-state svg { display: block; width: 3rem; height: 3rem; margin: 0 auto 1rem; color: #a3afc2; }
     .empty-state strong { color: var(--text); font-size: 1rem; font-weight: 500; }
@@ -110,7 +116,7 @@
     }
     @media (prefers-color-scheme: dark) { :root { --canvas: #181a20; --surface: #24262d; --glass: rgba(30, 32, 40, .92); --chrome: rgba(36, 38, 45, .92); --text: #f1f2f5; --muted: #a0a5b0; --line: #373a44; --blue: #68acff; --selected: #283b56; --hover: #2c2f38; } body { background: var(--canvas); } }
     @media (prefers-reduced-motion: no-preference) { .nav-button, .file-row, .icon-button { transition: background-color 100ms ease-out; } }
-    @media (prefers-reduced-transparency: reduce) { .sidebar, .topbar { background: var(--surface); backdrop-filter: none; } }
+    @media (prefers-reduced-transparency: reduce) { .sidebar, .topbar, .file-menu { background: var(--surface); backdrop-filter: none; } }
     @media (prefers-contrast: more) { :root { --muted: #51545d; --line: #70737c; } .sidebar, .topbar { background: var(--surface); backdrop-filter: none; } .search, .nav-button[aria-current="page"] { border: 1px solid currentColor; } }
     @media (prefers-contrast: more) and (prefers-color-scheme: dark) { :root { --muted: #d2d6df; --line: #a0a5b0; } }
   </style>
@@ -133,7 +139,7 @@
         <button class="nav-button" data-directory=""><svg aria-hidden="true"><use href="#icon-grid"></use></svg><span>全部文件</span><span class="nav-count">36</span></button>
       </nav>
       <div class="sidebar-label">文件夹</div>
-      <nav id="sidebar-folders" class="sidebar-folders" aria-label="目录快捷导航"></nav>
+      <nav id="sidebar-folders" class="sidebar-folders" aria-label="目录快捷导航"><button id="root-folder" class="nav-button" data-directory="" data-root><svg aria-hidden="true"><use href="#icon-folder"></use></svg><span>root</span></button></nav>
       <div class="sidebar-footer"><strong>随时找到需要的文件</strong>36 个文件，按目录有序收纳</div>
     </aside>
     <main class="main">
@@ -159,7 +165,7 @@
 </summary>
 <ul>
 <li data-path=".github/workflows/update-index.yml" data-kind="file" data-type="YAML 配置" data-size="1054">
-<a class="file-row" href="./.github/workflows/update-index.yml">
+<a class="file-row" href="./.github/workflows/update-index.yml" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/.github/workflows/update-index.yml">
 <span class="row-name"><span class="file-icon icon-code" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="update-index.yml">update-index.yml</span></span></span><span class="row-type">YAML 配置</span><span class="row-size">1,054 B</span>
 </a></li>
 </ul>
@@ -172,15 +178,15 @@
 </summary>
 <ul>
 <li data-path="cert/202610.mobileprovision" data-kind="file" data-type="文件" data-size="14518">
-<a class="file-row" href="./cert/202610.mobileprovision">
+<a class="file-row" href="./cert/202610.mobileprovision" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/cert/202610.mobileprovision">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="202610.mobileprovision">202610.mobileprovision</span></span></span><span class="row-type">文件</span><span class="row-size">14,518 B</span>
 </a></li>
 <li data-path="cert/202610.p12" data-kind="file" data-type="文件" data-size="3315">
-<a class="file-row" href="./cert/202610.p12">
+<a class="file-row" href="./cert/202610.p12" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/cert/202610.p12">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="202610.p12">202610.p12</span></span></span><span class="row-type">文件</span><span class="row-size">3,315 B</span>
 </a></li>
 <li data-path="cert/README.md" data-kind="file" data-type="Markdown 文档" data-size="9">
-<a class="file-row" href="./cert/README.md">
+<a class="file-row" href="./cert/README.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/cert/README.md">
 <span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="README.md">README.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">9 B</span>
 </a></li>
 </ul>
@@ -190,9 +196,9 @@
 <span class="row-name"><span class="file-icon icon-folder" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-folder"></use></svg></span><span class="name-group"><span class="filename" title="docs">docs</span></span></span><span class="row-type">文件夹</span><span class="row-size">1 项</span>
 </summary>
 <ul>
-<li data-path="docs/CHANGELOG.md" data-kind="file" data-type="Markdown 文档" data-size="3622">
-<a class="file-row" href="./docs/CHANGELOG.md">
-<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="CHANGELOG.md">CHANGELOG.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">3,622 B</span>
+<li data-path="docs/CHANGELOG.md" data-kind="file" data-type="Markdown 文档" data-size="5295">
+<a class="file-row" href="./docs/CHANGELOG.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/docs/CHANGELOG.md">
+<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="CHANGELOG.md">CHANGELOG.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">5,295 B</span>
 </a></li>
 </ul>
 </details></li>
@@ -202,23 +208,23 @@
 </summary>
 <ul>
 <li data-path="HappaConfig/.DS_Store" data-kind="file" data-type="文件" data-size="6148">
-<a class="file-row" href="./HappaConfig/.DS_Store">
+<a class="file-row" href="./HappaConfig/.DS_Store" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/HappaConfig/.DS_Store">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title=".DS_Store">.DS_Store</span></span></span><span class="row-type">文件</span><span class="row-size">6,148 B</span>
 </a></li>
 <li data-path="HappaConfig/China.list" data-kind="file" data-type="文件" data-size="3052668">
-<a class="file-row" href="./HappaConfig/China.list">
+<a class="file-row" href="./HappaConfig/China.list" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/HappaConfig/China.list">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="China.list">China.list</span></span></span><span class="row-type">文件</span><span class="row-size">3,052,668 B</span>
 </a></li>
 <li data-path="HappaConfig/Claude.list" data-kind="file" data-type="文件" data-size="807">
-<a class="file-row" href="./HappaConfig/Claude.list">
+<a class="file-row" href="./HappaConfig/Claude.list" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/HappaConfig/Claude.list">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="Claude.list">Claude.list</span></span></span><span class="row-type">文件</span><span class="row-size">807 B</span>
 </a></li>
 <li data-path="HappaConfig/HappaConfig.ini" data-kind="file" data-type="文件" data-size="14772">
-<a class="file-row" href="./HappaConfig/HappaConfig.ini">
+<a class="file-row" href="./HappaConfig/HappaConfig.ini" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/HappaConfig/HappaConfig.ini">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="HappaConfig.ini">HappaConfig.ini</span></span></span><span class="row-type">文件</span><span class="row-size">14,772 B</span>
 </a></li>
 <li data-path="HappaConfig/SiriAI.list" data-kind="file" data-type="文件" data-size="724">
-<a class="file-row" href="./HappaConfig/SiriAI.list">
+<a class="file-row" href="./HappaConfig/SiriAI.list" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/HappaConfig/SiriAI.list">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="SiriAI.list">SiriAI.list</span></span></span><span class="row-type">文件</span><span class="row-size">724 B</span>
 </a></li>
 </ul>
@@ -229,24 +235,24 @@
 </summary>
 <ul>
 <li data-path="memory/agents.md" data-kind="file" data-type="Markdown 文档" data-size="566">
-<a class="file-row" href="./memory/agents.md">
+<a class="file-row" href="./memory/agents.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/memory/agents.md">
 <span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="agents.md">agents.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">566 B</span>
 </a></li>
 <li data-path="memory/gotchas.md" data-kind="file" data-type="Markdown 文档" data-size="64">
-<a class="file-row" href="./memory/gotchas.md">
+<a class="file-row" href="./memory/gotchas.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/memory/gotchas.md">
 <span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="gotchas.md">gotchas.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">64 B</span>
 </a></li>
-<li data-path="memory/plan.md" data-kind="file" data-type="Markdown 文档" data-size="1676">
-<a class="file-row" href="./memory/plan.md">
-<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="plan.md">plan.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">1,676 B</span>
+<li data-path="memory/plan.md" data-kind="file" data-type="Markdown 文档" data-size="2412">
+<a class="file-row" href="./memory/plan.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/memory/plan.md">
+<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="plan.md">plan.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">2,412 B</span>
 </a></li>
-<li data-path="memory/progress.md" data-kind="file" data-type="Markdown 文档" data-size="985">
-<a class="file-row" href="./memory/progress.md">
-<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="progress.md">progress.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">985 B</span>
+<li data-path="memory/progress.md" data-kind="file" data-type="Markdown 文档" data-size="1789">
+<a class="file-row" href="./memory/progress.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/memory/progress.md">
+<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="progress.md">progress.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">1,789 B</span>
 </a></li>
-<li data-path="memory/verify.md" data-kind="file" data-type="Markdown 文档" data-size="1632">
-<a class="file-row" href="./memory/verify.md">
-<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="verify.md">verify.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">1,632 B</span>
+<li data-path="memory/verify.md" data-kind="file" data-type="Markdown 文档" data-size="2916">
+<a class="file-row" href="./memory/verify.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/memory/verify.md">
+<span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="verify.md">verify.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">2,916 B</span>
 </a></li>
 </ul>
 </details></li>
@@ -261,11 +267,11 @@
 </summary>
 <ul>
 <li data-path="pelican-ride/Claude/.DS_Store" data-kind="file" data-type="文件" data-size="6148">
-<a class="file-row" href="./pelican-ride/Claude/.DS_Store">
+<a class="file-row" href="./pelican-ride/Claude/.DS_Store" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/pelican-ride/Claude/.DS_Store">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title=".DS_Store">.DS_Store</span></span></span><span class="row-type">文件</span><span class="row-size">6,148 B</span>
 </a></li>
 <li data-path="pelican-ride/Claude/pelican-bike.html" data-kind="file" data-type="网页" data-size="23637">
-<a class="file-row" href="./pelican-ride/Claude/pelican-bike.html">
+<a class="file-row" href="./pelican-ride/Claude/pelican-bike.html" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/pelican-ride/Claude/pelican-bike.html">
 <span class="row-name"><span class="file-icon icon-web" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="pelican-bike.html">pelican-bike.html</span></span></span><span class="row-type">网页</span><span class="row-size">23,637 B</span>
 </a></li>
 </ul>
@@ -276,17 +282,17 @@
 </summary>
 <ul>
 <li data-path="pelican-ride/GPT/bicycle-rides-pelican.html" data-kind="file" data-type="网页" data-size="16963">
-<a class="file-row" href="./pelican-ride/GPT/bicycle-rides-pelican.html">
+<a class="file-row" href="./pelican-ride/GPT/bicycle-rides-pelican.html" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/pelican-ride/GPT/bicycle-rides-pelican.html">
 <span class="row-name"><span class="file-icon icon-web" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="bicycle-rides-pelican.html">bicycle-rides-pelican.html</span></span></span><span class="row-type">网页</span><span class="row-size">16,963 B</span>
 </a></li>
 <li data-path="pelican-ride/GPT/pelican-ride.html" data-kind="file" data-type="网页" data-size="17396">
-<a class="file-row" href="./pelican-ride/GPT/pelican-ride.html">
+<a class="file-row" href="./pelican-ride/GPT/pelican-ride.html" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/pelican-ride/GPT/pelican-ride.html">
 <span class="row-name"><span class="file-icon icon-web" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="pelican-ride.html">pelican-ride.html</span></span></span><span class="row-type">网页</span><span class="row-size">17,396 B</span>
 </a></li>
 </ul>
 </details></li>
 <li data-path="pelican-ride/.DS_Store" data-kind="file" data-type="文件" data-size="6148">
-<a class="file-row" href="./pelican-ride/.DS_Store">
+<a class="file-row" href="./pelican-ride/.DS_Store" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/pelican-ride/.DS_Store">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title=".DS_Store">.DS_Store</span></span></span><span class="row-type">文件</span><span class="row-size">6,148 B</span>
 </a></li>
 </ul>
@@ -296,13 +302,13 @@
 <span class="row-name"><span class="file-icon icon-folder" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-folder"></use></svg></span><span class="name-group"><span class="filename" title="scripts">scripts</span></span></span><span class="row-type">文件夹</span><span class="row-size">2 项</span>
 </summary>
 <ul>
-<li data-path="scripts/generate_index.py" data-kind="file" data-type="Python 源码" data-size="3300">
-<a class="file-row" href="./scripts/generate_index.py">
-<span class="row-name"><span class="file-icon icon-code" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="generate_index.py">generate_index.py</span></span></span><span class="row-type">Python 源码</span><span class="row-size">3,300 B</span>
+<li data-path="scripts/generate_index.py" data-kind="file" data-type="Python 源码" data-size="4254">
+<a class="file-row" href="./scripts/generate_index.py" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/scripts/generate_index.py">
+<span class="row-name"><span class="file-icon icon-code" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="generate_index.py">generate_index.py</span></span></span><span class="row-type">Python 源码</span><span class="row-size">4,254 B</span>
 </a></li>
-<li data-path="scripts/index.template.html" data-kind="file" data-type="网页" data-size="20998">
-<a class="file-row" href="./scripts/index.template.html">
-<span class="row-name"><span class="file-icon icon-web" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="index.template.html">index.template.html</span></span></span><span class="row-type">网页</span><span class="row-size">20,998 B</span>
+<li data-path="scripts/index.template.html" data-kind="file" data-type="网页" data-size="26547">
+<a class="file-row" href="./scripts/index.template.html" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/scripts/index.template.html">
+<span class="row-name"><span class="file-icon icon-web" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="index.template.html">index.template.html</span></span></span><span class="row-type">网页</span><span class="row-size">26,547 B</span>
 </a></li>
 </ul>
 </details></li>
@@ -311,62 +317,62 @@
 <span class="row-name"><span class="file-icon icon-folder" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-folder"></use></svg></span><span class="name-group"><span class="filename" title="tests">tests</span></span></span><span class="row-type">文件夹</span><span class="row-size">1 项</span>
 </summary>
 <ul>
-<li data-path="tests/test_generate_index.py" data-kind="file" data-type="Python 源码" data-size="6363">
-<a class="file-row" href="./tests/test_generate_index.py">
-<span class="row-name"><span class="file-icon icon-code" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="test_generate_index.py">test_generate_index.py</span></span></span><span class="row-type">Python 源码</span><span class="row-size">6,363 B</span>
+<li data-path="tests/test_generate_index.py" data-kind="file" data-type="Python 源码" data-size="8150">
+<a class="file-row" href="./tests/test_generate_index.py" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/tests/test_generate_index.py">
+<span class="row-name"><span class="file-icon icon-code" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="test_generate_index.py">test_generate_index.py</span></span></span><span class="row-type">Python 源码</span><span class="row-size">8,150 B</span>
 </a></li>
 </ul>
 </details></li>
 <li data-path=".DS_Store" data-kind="file" data-type="文件" data-size="10244">
-<a class="file-row" href="./.DS_Store">
+<a class="file-row" href="./.DS_Store" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/.DS_Store">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title=".DS_Store">.DS_Store</span></span></span><span class="row-type">文件</span><span class="row-size">10,244 B</span>
 </a></li>
 <li data-path=".gitignore" data-kind="file" data-type="文件" data-size="55">
-<a class="file-row" href="./.gitignore">
+<a class="file-row" href="./.gitignore" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/.gitignore">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title=".gitignore">.gitignore</span></span></span><span class="row-type">文件</span><span class="row-size">55 B</span>
 </a></li>
 <li data-path="AGENTS.md" data-kind="file" data-type="Markdown 文档" data-size="17339">
-<a class="file-row" href="./AGENTS.md">
+<a class="file-row" href="./AGENTS.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/AGENTS.md">
 <span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="AGENTS.md">AGENTS.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">17,339 B</span>
 </a></li>
 <li data-path="AI-Agents-in-Depth-zh-CN.epub" data-kind="file" data-type="电子书" data-size="3445841">
-<a class="file-row" href="./AI-Agents-in-Depth-zh-CN.epub">
+<a class="file-row" href="./AI-Agents-in-Depth-zh-CN.epub" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/AI-Agents-in-Depth-zh-CN.epub">
 <span class="row-name"><span class="file-icon icon-book" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="AI-Agents-in-Depth-zh-CN.epub">AI-Agents-in-Depth-zh-CN.epub</span></span></span><span class="row-type">电子书</span><span class="row-size">3,445,841 B</span>
 </a></li>
 <li data-path="AI-Agents-in-Depth-zh-CN.pdf" data-kind="file" data-type="PDF 文档" data-size="11084397">
-<a class="file-row" href="./AI-Agents-in-Depth-zh-CN.pdf">
+<a class="file-row" href="./AI-Agents-in-Depth-zh-CN.pdf" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/AI-Agents-in-Depth-zh-CN.pdf">
 <span class="row-name"><span class="file-icon icon-pdf" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="AI-Agents-in-Depth-zh-CN.pdf">AI-Agents-in-Depth-zh-CN.pdf</span></span></span><span class="row-type">PDF 文档</span><span class="row-size">11,084,397 B</span>
 </a></li>
 <li data-path="HowToLiveBetter.pdf" data-kind="file" data-type="PDF 文档" data-size="6692665">
-<a class="file-row" href="./HowToLiveBetter.pdf">
+<a class="file-row" href="./HowToLiveBetter.pdf" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/HowToLiveBetter.pdf">
 <span class="row-name"><span class="file-icon icon-pdf" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="HowToLiveBetter.pdf">HowToLiveBetter.pdf</span></span></span><span class="row-type">PDF 文档</span><span class="row-size">6,692,665 B</span>
 </a></li>
 <li data-path="index.html" data-kind="file" data-type="网页" data-size="">
-<a class="file-row" href="./index.html">
+<a class="file-row" href="./index.html" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/index.html">
 <span class="row-name"><span class="file-icon icon-web" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="index.html">index.html</span></span></span><span class="row-type">网页</span><span class="row-size">—</span>
 </a></li>
 <li data-path="JIUWEI.conf" data-kind="file" data-type="文件" data-size="25855">
-<a class="file-row" href="./JIUWEI.conf">
+<a class="file-row" href="./JIUWEI.conf" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/JIUWEI.conf">
 <span class="row-name"><span class="file-icon icon-file" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="JIUWEI.conf">JIUWEI.conf</span></span></span><span class="row-type">文件</span><span class="row-size">25,855 B</span>
 </a></li>
 <li data-path="TXAGENT.md" data-kind="file" data-type="Markdown 文档" data-size="7532">
-<a class="file-row" href="./TXAGENT.md">
+<a class="file-row" href="./TXAGENT.md" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/TXAGENT.md">
 <span class="row-name"><span class="file-icon icon-text" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="TXAGENT.md">TXAGENT.md</span></span></span><span class="row-type">Markdown 文档</span><span class="row-size">7,532 B</span>
 </a></li>
 <li data-path="【（应届）多模态算法工程师_北京_40_70K】林芮瑭_26年应届生.pdf" data-kind="file" data-type="PDF 文档" data-size="1209403">
-<a class="file-row" href="./%E3%80%90%EF%BC%88%E5%BA%94%E5%B1%8A%EF%BC%89%E5%A4%9A%E6%A8%A1%E6%80%81%E7%AE%97%E6%B3%95%E5%B7%A5%E7%A8%8B%E5%B8%88_%E5%8C%97%E4%BA%AC_40_70K%E3%80%91%E6%9E%97%E8%8A%AE%E7%91%AD_26%E5%B9%B4%E5%BA%94%E5%B1%8A%E7%94%9F.pdf">
+<a class="file-row" href="./%E3%80%90%EF%BC%88%E5%BA%94%E5%B1%8A%EF%BC%89%E5%A4%9A%E6%A8%A1%E6%80%81%E7%AE%97%E6%B3%95%E5%B7%A5%E7%A8%8B%E5%B8%88_%E5%8C%97%E4%BA%AC_40_70K%E3%80%91%E6%9E%97%E8%8A%AE%E7%91%AD_26%E5%B9%B4%E5%BA%94%E5%B1%8A%E7%94%9F.pdf" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/%E3%80%90%EF%BC%88%E5%BA%94%E5%B1%8A%EF%BC%89%E5%A4%9A%E6%A8%A1%E6%80%81%E7%AE%97%E6%B3%95%E5%B7%A5%E7%A8%8B%E5%B8%88_%E5%8C%97%E4%BA%AC_40_70K%E3%80%91%E6%9E%97%E8%8A%AE%E7%91%AD_26%E5%B9%B4%E5%BA%94%E5%B1%8A%E7%94%9F.pdf">
 <span class="row-name"><span class="file-icon icon-pdf" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="【（应届）多模态算法工程师_北京_40_70K】林芮瑭_26年应届生.pdf">【（应届）多模态算法工程师_北京_40_70K】林芮瑭_26年应届生.pdf</span></span></span><span class="row-type">PDF 文档</span><span class="row-size">1,209,403 B</span>
 </a></li>
 <li data-path="上海城市轨道交通车体号编组表_2026暑_（2026_7更新） (1).xlsx" data-kind="file" data-type="电子表格" data-size="496538">
-<a class="file-row" href="./%E4%B8%8A%E6%B5%B7%E5%9F%8E%E5%B8%82%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E8%BD%A6%E4%BD%93%E5%8F%B7%E7%BC%96%E7%BB%84%E8%A1%A8_2026%E6%9A%91_%EF%BC%882026_7%E6%9B%B4%E6%96%B0%EF%BC%89%20%281%29.xlsx">
+<a class="file-row" href="./%E4%B8%8A%E6%B5%B7%E5%9F%8E%E5%B8%82%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E8%BD%A6%E4%BD%93%E5%8F%B7%E7%BC%96%E7%BB%84%E8%A1%A8_2026%E6%9A%91_%EF%BC%882026_7%E6%9B%B4%E6%96%B0%EF%BC%89%20%281%29.xlsx" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/%E4%B8%8A%E6%B5%B7%E5%9F%8E%E5%B8%82%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E8%BD%A6%E4%BD%93%E5%8F%B7%E7%BC%96%E7%BB%84%E8%A1%A8_2026%E6%9A%91_%EF%BC%882026_7%E6%9B%B4%E6%96%B0%EF%BC%89%20%281%29.xlsx">
 <span class="row-name"><span class="file-icon icon-sheet" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="上海城市轨道交通车体号编组表_2026暑_（2026_7更新） (1).xlsx">上海城市轨道交通车体号编组表_2026暑_（2026_7更新） (1).xlsx</span></span></span><span class="row-type">电子表格</span><span class="row-size">496,538 B</span>
 </a></li>
 <li data-path="上海城市轨道交通车体号编组表_2026暑_（2026_7更新）.xlsx" data-kind="file" data-type="电子表格" data-size="496538">
-<a class="file-row" href="./%E4%B8%8A%E6%B5%B7%E5%9F%8E%E5%B8%82%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E8%BD%A6%E4%BD%93%E5%8F%B7%E7%BC%96%E7%BB%84%E8%A1%A8_2026%E6%9A%91_%EF%BC%882026_7%E6%9B%B4%E6%96%B0%EF%BC%89.xlsx">
+<a class="file-row" href="./%E4%B8%8A%E6%B5%B7%E5%9F%8E%E5%B8%82%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E8%BD%A6%E4%BD%93%E5%8F%B7%E7%BC%96%E7%BB%84%E8%A1%A8_2026%E6%9A%91_%EF%BC%882026_7%E6%9B%B4%E6%96%B0%EF%BC%89.xlsx" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/%E4%B8%8A%E6%B5%B7%E5%9F%8E%E5%B8%82%E8%BD%A8%E9%81%93%E4%BA%A4%E9%80%9A%E8%BD%A6%E4%BD%93%E5%8F%B7%E7%BC%96%E7%BB%84%E8%A1%A8_2026%E6%9A%91_%EF%BC%882026_7%E6%9B%B4%E6%96%B0%EF%BC%89.xlsx">
 <span class="row-name"><span class="file-icon icon-sheet" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="上海城市轨道交通车体号编组表_2026暑_（2026_7更新）.xlsx">上海城市轨道交通车体号编组表_2026暑_（2026_7更新）.xlsx</span></span></span><span class="row-type">电子表格</span><span class="row-size">496,538 B</span>
 </a></li>
 <li data-path="大模型安全工程师_陈永锋.pdf" data-kind="file" data-type="PDF 文档" data-size="631384">
-<a class="file-row" href="./%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8%E5%B7%A5%E7%A8%8B%E5%B8%88_%E9%99%88%E6%B0%B8%E9%94%8B.pdf">
+<a class="file-row" href="./%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8%E5%B7%A5%E7%A8%8B%E5%B8%88_%E9%99%88%E6%B0%B8%E9%94%8B.pdf" data-direct-url="https://raw.githubusercontent.com/OyamaMeek/Document/refs/heads/main/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%AE%89%E5%85%A8%E5%B7%A5%E7%A8%8B%E5%B8%88_%E9%99%88%E6%B0%B8%E9%94%8B.pdf">
 <span class="row-name"><span class="file-icon icon-pdf" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-file"></use></svg></span><span class="name-group"><span class="filename" title="大模型安全工程师_陈永锋.pdf">大模型安全工程师_陈永锋.pdf</span></span></span><span class="row-type">PDF 文档</span><span class="row-size">631,384 B</span>
 </a></li>
 </ul></nav>
@@ -374,6 +380,9 @@
       </section>
     </main>
   </div>
+  <template id="root-entry"><span class="row-name"><span class="file-icon icon-folder" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-folder"></use></svg></span><span class="name-group"><span class="filename">root</span></span></span><span class="row-type">文件夹</span><span class="row-size"></span></template>
+  <div id="file-menu" class="file-menu" role="menu" aria-label="文件操作" hidden><button id="copy-link" type="button" role="menuitem">复制直链</button><input id="manual-link" type="text" aria-label="文件直链，按复制快捷键手动复制" readonly hidden></div>
+  <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
   <script type="module">
     const source = document.querySelector("#file-tree");
     const entries = [...source.querySelectorAll("li[data-path]")].map(row => {
@@ -390,6 +399,15 @@
     const clear = document.querySelector("#clear-search");
     const empty = document.querySelector("#empty-state");
     const sidebar = document.querySelector("#sidebar-folders");
+    const rootFiles = entries.filter(entry => entry.kind === "file" && entry.parent === "");
+    const rootEntry = { kind: "folder", name: "root", path: "", root: true, action: document.querySelector("#root-entry").content };
+    rootEntry.action.querySelector(".row-size").textContent = `${rootFiles.length} 项`;
+    const menu = document.querySelector("#file-menu");
+    const copy = document.querySelector("#copy-link");
+    const manual = document.querySelector("#manual-link");
+    const status = document.querySelector("#copy-status");
+    let menuFile;
+    let statusTimer;
 
     function icon(name) {
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -422,9 +440,9 @@
       return new URLSearchParams(location.hash.slice(1)).get("dir") || "";
     }
 
-    function navigate(path) {
+    function navigate(path, root = false) {
       search.value = "";
-      const hash = path ? `#${new URLSearchParams({ dir: path })}` : "";
+      const hash = root ? "#view=root" : path ? `#${new URLSearchParams({ dir: path })}` : "";
       if (location.hash === hash) render();
       else location.hash = hash;
     }
@@ -437,17 +455,24 @@
     }
 
     function render() {
+      closeMenu();
       const directory = currentDirectory();
+      const root = new URLSearchParams(location.hash.slice(1)).get("view") === "root";
       const query = search.value.trim().toLocaleLowerCase();
       const exists = directory === "" || folders.some(folder => folder.path === directory);
-      const visible = exists ? entries.filter(entry => query ? entry.path.toLocaleLowerCase().includes(query) : entry.parent === directory) : [];
+      const visible = !exists ? [] : query ? entries.filter(entry => entry.path.toLocaleLowerCase().includes(query)) : root ? [...rootFiles] : directory ? entries.filter(entry => entry.parent === directory) : [...folders.filter(entry => entry.parent === ""), rootEntry];
       visible.sort((a, b) => Number(a.kind !== "folder") - Number(b.kind !== "folder") || a.name.localeCompare(b.name, "zh-CN", { numeric: true }));
-      title.textContent = !exists ? "目录不存在" : query ? "搜索结果" : directory.split("/").pop() || "全部文件";
+      title.textContent = !exists ? "目录不存在" : query ? "搜索结果" : root ? "root" : directory.split("/").pop() || "全部文件";
       document.title = `${title.textContent} · Document`;
       document.querySelector("#visible-count").textContent = `${visible.length} 个项目`;
       clear.hidden = !search.value;
-      up.disabled = !directory && !query;
+      up.disabled = !directory && !root && !query;
       breadcrumbs.replaceChildren(directoryButton("全部文件", "", ""));
+      if (root) {
+        const button = directoryButton("root", "", "");
+        button.dataset.root = "";
+        breadcrumbs.append(icon("chevron"), button);
+      }
       let path = "";
       if (exists && directory) {
         for (const part of directory.split("/")) {
@@ -457,7 +482,7 @@
       }
       breadcrumbs.lastElementChild.setAttribute("aria-current", "page");
       for (const button of sidebar.parentElement.querySelectorAll("button[data-directory]")) {
-        if (button.dataset.directory === directory && !query) button.setAttribute("aria-current", "page");
+        if (button.dataset.directory === directory && button.hasAttribute("data-root") === root && !query) button.setAttribute("aria-current", "page");
         else button.removeAttribute("aria-current");
       }
       const fragment = document.createDocumentFragment();
@@ -467,6 +492,7 @@
         if (entry.kind === "folder") {
           action = directoryButton("", entry.path, "file-row");
           action.replaceChildren(...[...entry.action.childNodes].map(node => node.cloneNode(true)));
+          if (entry.root) action.dataset.root = "";
           action.setAttribute("aria-label", `打开文件夹 ${entry.name}`);
         } else {
           action = entry.action.cloneNode(true);
@@ -476,7 +502,7 @@
         if (query) {
           const parent = document.createElement("span");
           parent.className = "file-parent";
-          parent.textContent = entry.parent || "全部文件";
+          parent.textContent = entry.parent || "root";
           action.querySelector(".name-group").append(parent);
         }
         row.append(action);
@@ -491,7 +517,63 @@
 
     document.addEventListener("click", event => {
       const button = event.target.closest("button[data-directory]");
-      if (button) navigate(button.dataset.directory);
+      if (button) navigate(button.dataset.directory, button.hasAttribute("data-root"));
+    });
+    function closeMenu(restoreFocus = false) {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      if (restoreFocus) menuFile?.focus({ preventScroll: true });
+    }
+
+    function openMenu(file, x, y) {
+      menuFile = file;
+      manual.hidden = true;
+      manual.value = file.dataset.directUrl;
+      menu.hidden = false;
+      menu.style.left = `${Math.max(8, Math.min(x, innerWidth - menu.offsetWidth - 8))}px`;
+      menu.style.top = `${Math.max(8, Math.min(y, innerHeight - menu.offsetHeight - 8))}px`;
+      copy.focus({ preventScroll: true });
+    }
+
+    document.addEventListener("contextmenu", event => {
+      const file = event.target.closest("a[data-direct-url]");
+      if (!file) { closeMenu(); return; }
+      event.preventDefault();
+      const rect = file.getBoundingClientRect();
+      openMenu(file, event.clientX || rect.left, event.clientY || rect.bottom);
+    });
+    document.addEventListener("keydown", event => {
+      const file = event.target.closest("a[data-direct-url]");
+      if (file && (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10"))) {
+        event.preventDefault();
+        const rect = file.getBoundingClientRect();
+        openMenu(file, rect.left, rect.bottom);
+      } else if (!menu.hidden && event.key === "Escape") {
+        event.preventDefault();
+        closeMenu(true);
+      } else if (!menu.hidden && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+        event.preventDefault();
+        copy.focus();
+      } else if (!menu.hidden && event.key === "Tab") closeMenu();
+    });
+    document.addEventListener("pointerdown", event => { if (!menu.contains(event.target)) closeMenu(); });
+    window.addEventListener("resize", () => closeMenu());
+    window.addEventListener("scroll", event => { if (event.target !== manual) closeMenu(); }, true);
+    copy.addEventListener("click", async () => {
+      const url = manual.value;
+      clearTimeout(statusTimer);
+      try {
+        await navigator.clipboard.writeText(url);
+        closeMenu(true);
+        status.textContent = "直链已复制";
+      } catch {
+        status.textContent = "无法自动复制，请复制菜单中的链接";
+        manual.hidden = false;
+        menu.style.top = `${Math.max(8, Math.min(parseFloat(menu.style.top), innerHeight - menu.offsetHeight - 8))}px`;
+        manual.focus({ preventScroll: true });
+        manual.select();
+      }
+      statusTimer = setTimeout(() => { status.textContent = ""; }, 4000);
     });
     search.addEventListener("input", render);
     clear.addEventListener("click", () => { search.value = ""; render(); search.focus(); });

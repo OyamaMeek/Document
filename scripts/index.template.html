@@ -81,6 +81,12 @@
     .file-parent { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: .1rem; font-size: .7rem; color: var(--muted); }
     .row-type, .row-size { color: var(--muted); font-size: .74rem; }
     .row-size { font-variant-numeric: tabular-nums; }
+    .file-menu { position: fixed; z-index: 10; width: min(18rem, calc(100vw - 1rem)); padding: .4rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--chrome); backdrop-filter: blur(20px); box-shadow: 0 .5rem 2rem #0002; }
+    .file-menu button { width: 100%; min-height: 2.5rem; padding: .5rem .75rem; border: 0; border-radius: .45rem; text-align: left; color: var(--text); background: transparent; font-size: .84rem; }
+    .file-menu button:hover, .file-menu button:focus-visible { color: var(--blue); background: var(--selected); }
+    .file-menu input { width: 100%; padding: .5rem; border: 1px solid var(--line); border-radius: .4rem; background: var(--surface); color: var(--text); font-size: .75rem; }
+    .copy-status { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); z-index: 11; max-width: calc(100vw - 2rem); padding: .65rem 1rem; border-radius: .7rem; background: var(--text); color: var(--surface); font-size: .8rem; }
+    .copy-status:empty { display: none; }
     .empty-state { padding: 4rem 1rem; text-align: center; color: var(--muted); }
     .empty-state svg { display: block; width: 3rem; height: 3rem; margin: 0 auto 1rem; color: #a3afc2; }
     .empty-state strong { color: var(--text); font-size: 1rem; font-weight: 500; }
@@ -110,7 +116,7 @@
     }
     @media (prefers-color-scheme: dark) { :root { --canvas: #181a20; --surface: #24262d; --glass: rgba(30, 32, 40, .92); --chrome: rgba(36, 38, 45, .92); --text: #f1f2f5; --muted: #a0a5b0; --line: #373a44; --blue: #68acff; --selected: #283b56; --hover: #2c2f38; } body { background: var(--canvas); } }
     @media (prefers-reduced-motion: no-preference) { .nav-button, .file-row, .icon-button { transition: background-color 100ms ease-out; } }
-    @media (prefers-reduced-transparency: reduce) { .sidebar, .topbar { background: var(--surface); backdrop-filter: none; } }
+    @media (prefers-reduced-transparency: reduce) { .sidebar, .topbar, .file-menu { background: var(--surface); backdrop-filter: none; } }
     @media (prefers-contrast: more) { :root { --muted: #51545d; --line: #70737c; } .sidebar, .topbar { background: var(--surface); backdrop-filter: none; } .search, .nav-button[aria-current="page"] { border: 1px solid currentColor; } }
     @media (prefers-contrast: more) and (prefers-color-scheme: dark) { :root { --muted: #d2d6df; --line: #a0a5b0; } }
   </style>
@@ -133,7 +139,7 @@
         <button class="nav-button" data-directory=""><svg aria-hidden="true"><use href="#icon-grid"></use></svg><span>全部文件</span><span class="nav-count"><!-- FILE_COUNT --></span></button>
       </nav>
       <div class="sidebar-label">文件夹</div>
-      <nav id="sidebar-folders" class="sidebar-folders" aria-label="目录快捷导航"></nav>
+      <nav id="sidebar-folders" class="sidebar-folders" aria-label="目录快捷导航"><button id="root-folder" class="nav-button" data-directory="" data-root><svg aria-hidden="true"><use href="#icon-folder"></use></svg><span>root</span></button></nav>
       <div class="sidebar-footer"><strong>随时找到需要的文件</strong><!-- FILE_COUNT --> 个文件，按目录有序收纳</div>
     </aside>
     <main class="main">
@@ -152,6 +158,9 @@
       </section>
     </main>
   </div>
+  <template id="root-entry"><span class="row-name"><span class="file-icon icon-folder" aria-hidden="true"><svg viewBox="0 0 32 32"><use href="#icon-folder"></use></svg></span><span class="name-group"><span class="filename">root</span></span></span><span class="row-type">文件夹</span><span class="row-size"></span></template>
+  <div id="file-menu" class="file-menu" role="menu" aria-label="文件操作" hidden><button id="copy-link" type="button" role="menuitem">复制直链</button><input id="manual-link" type="text" aria-label="文件直链，按复制快捷键手动复制" readonly hidden></div>
+  <div id="copy-status" class="copy-status" role="status" aria-live="polite"></div>
   <script type="module">
     const source = document.querySelector("#file-tree");
     const entries = [...source.querySelectorAll("li[data-path]")].map(row => {
@@ -168,6 +177,15 @@
     const clear = document.querySelector("#clear-search");
     const empty = document.querySelector("#empty-state");
     const sidebar = document.querySelector("#sidebar-folders");
+    const rootFiles = entries.filter(entry => entry.kind === "file" && entry.parent === "");
+    const rootEntry = { kind: "folder", name: "root", path: "", root: true, action: document.querySelector("#root-entry").content };
+    rootEntry.action.querySelector(".row-size").textContent = `${rootFiles.length} 项`;
+    const menu = document.querySelector("#file-menu");
+    const copy = document.querySelector("#copy-link");
+    const manual = document.querySelector("#manual-link");
+    const status = document.querySelector("#copy-status");
+    let menuFile;
+    let statusTimer;
 
     function icon(name) {
       const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -200,9 +218,9 @@
       return new URLSearchParams(location.hash.slice(1)).get("dir") || "";
     }
 
-    function navigate(path) {
+    function navigate(path, root = false) {
       search.value = "";
-      const hash = path ? `#${new URLSearchParams({ dir: path })}` : "";
+      const hash = root ? "#view=root" : path ? `#${new URLSearchParams({ dir: path })}` : "";
       if (location.hash === hash) render();
       else location.hash = hash;
     }
@@ -215,17 +233,24 @@
     }
 
     function render() {
+      closeMenu();
       const directory = currentDirectory();
+      const root = new URLSearchParams(location.hash.slice(1)).get("view") === "root";
       const query = search.value.trim().toLocaleLowerCase();
       const exists = directory === "" || folders.some(folder => folder.path === directory);
-      const visible = exists ? entries.filter(entry => query ? entry.path.toLocaleLowerCase().includes(query) : entry.parent === directory) : [];
+      const visible = !exists ? [] : query ? entries.filter(entry => entry.path.toLocaleLowerCase().includes(query)) : root ? [...rootFiles] : directory ? entries.filter(entry => entry.parent === directory) : [...folders.filter(entry => entry.parent === ""), rootEntry];
       visible.sort((a, b) => Number(a.kind !== "folder") - Number(b.kind !== "folder") || a.name.localeCompare(b.name, "zh-CN", { numeric: true }));
-      title.textContent = !exists ? "目录不存在" : query ? "搜索结果" : directory.split("/").pop() || "全部文件";
+      title.textContent = !exists ? "目录不存在" : query ? "搜索结果" : root ? "root" : directory.split("/").pop() || "全部文件";
       document.title = `${title.textContent} · Document`;
       document.querySelector("#visible-count").textContent = `${visible.length} 个项目`;
       clear.hidden = !search.value;
-      up.disabled = !directory && !query;
+      up.disabled = !directory && !root && !query;
       breadcrumbs.replaceChildren(directoryButton("全部文件", "", ""));
+      if (root) {
+        const button = directoryButton("root", "", "");
+        button.dataset.root = "";
+        breadcrumbs.append(icon("chevron"), button);
+      }
       let path = "";
       if (exists && directory) {
         for (const part of directory.split("/")) {
@@ -235,7 +260,7 @@
       }
       breadcrumbs.lastElementChild.setAttribute("aria-current", "page");
       for (const button of sidebar.parentElement.querySelectorAll("button[data-directory]")) {
-        if (button.dataset.directory === directory && !query) button.setAttribute("aria-current", "page");
+        if (button.dataset.directory === directory && button.hasAttribute("data-root") === root && !query) button.setAttribute("aria-current", "page");
         else button.removeAttribute("aria-current");
       }
       const fragment = document.createDocumentFragment();
@@ -245,6 +270,7 @@
         if (entry.kind === "folder") {
           action = directoryButton("", entry.path, "file-row");
           action.replaceChildren(...[...entry.action.childNodes].map(node => node.cloneNode(true)));
+          if (entry.root) action.dataset.root = "";
           action.setAttribute("aria-label", `打开文件夹 ${entry.name}`);
         } else {
           action = entry.action.cloneNode(true);
@@ -254,7 +280,7 @@
         if (query) {
           const parent = document.createElement("span");
           parent.className = "file-parent";
-          parent.textContent = entry.parent || "全部文件";
+          parent.textContent = entry.parent || "root";
           action.querySelector(".name-group").append(parent);
         }
         row.append(action);
@@ -269,7 +295,63 @@
 
     document.addEventListener("click", event => {
       const button = event.target.closest("button[data-directory]");
-      if (button) navigate(button.dataset.directory);
+      if (button) navigate(button.dataset.directory, button.hasAttribute("data-root"));
+    });
+    function closeMenu(restoreFocus = false) {
+      if (menu.hidden) return;
+      menu.hidden = true;
+      if (restoreFocus) menuFile?.focus({ preventScroll: true });
+    }
+
+    function openMenu(file, x, y) {
+      menuFile = file;
+      manual.hidden = true;
+      manual.value = file.dataset.directUrl;
+      menu.hidden = false;
+      menu.style.left = `${Math.max(8, Math.min(x, innerWidth - menu.offsetWidth - 8))}px`;
+      menu.style.top = `${Math.max(8, Math.min(y, innerHeight - menu.offsetHeight - 8))}px`;
+      copy.focus({ preventScroll: true });
+    }
+
+    document.addEventListener("contextmenu", event => {
+      const file = event.target.closest("a[data-direct-url]");
+      if (!file) { closeMenu(); return; }
+      event.preventDefault();
+      const rect = file.getBoundingClientRect();
+      openMenu(file, event.clientX || rect.left, event.clientY || rect.bottom);
+    });
+    document.addEventListener("keydown", event => {
+      const file = event.target.closest("a[data-direct-url]");
+      if (file && (event.key === "ContextMenu" || (event.shiftKey && event.key === "F10"))) {
+        event.preventDefault();
+        const rect = file.getBoundingClientRect();
+        openMenu(file, rect.left, rect.bottom);
+      } else if (!menu.hidden && event.key === "Escape") {
+        event.preventDefault();
+        closeMenu(true);
+      } else if (!menu.hidden && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
+        event.preventDefault();
+        copy.focus();
+      } else if (!menu.hidden && event.key === "Tab") closeMenu();
+    });
+    document.addEventListener("pointerdown", event => { if (!menu.contains(event.target)) closeMenu(); });
+    window.addEventListener("resize", () => closeMenu());
+    window.addEventListener("scroll", event => { if (event.target !== manual) closeMenu(); }, true);
+    copy.addEventListener("click", async () => {
+      const url = manual.value;
+      clearTimeout(statusTimer);
+      try {
+        await navigator.clipboard.writeText(url);
+        closeMenu(true);
+        status.textContent = "直链已复制";
+      } catch {
+        status.textContent = "无法自动复制，请复制菜单中的链接";
+        manual.hidden = false;
+        menu.style.top = `${Math.max(8, Math.min(parseFloat(menu.style.top), innerHeight - menu.offsetHeight - 8))}px`;
+        manual.focus({ preventScroll: true });
+        manual.select();
+      }
+      statusTimer = setTimeout(() => { status.textContent = ""; }, 4000);
     });
     search.addEventListener("input", render);
     clear.addEventListener("click", () => { search.value = ""; render(); search.focus(); });

@@ -50,3 +50,26 @@
 - **Git 提交**：`af91061 feat: add Apple-style file browser to generated index`，已普通推送至 `origin/main`，远端哈希一致；哈希补记通过后续文档提交保存。
 
 ---
+
+## [2026-10-14 00:09] root 文件夹与右键复制直链
+
+- **需求/问题描述**：
+  > 增加 root 文件夹显示根目录文件，每个文件右键支持复制直链，后续 push 自动生成的页面也保持这些功能。
+
+- **实际实现的功能与改动**：
+  - 新增虚拟 root 文件夹和侧栏入口，集中展示 13 个根目录文件；实际文件路径保持不变，支持面包屑、返回上级和刷新恢复。
+  - 全部文件继续参与搜索，原有目录导航保持可用；独立 `#view=root` 避免与真实 root 目录冲突。
+  - 根据 GitHub origin 和当前分支，为全部文件生成编码后的原始文件直链，支持 HTTPS 与 SSH origin。
+  - 文件右键提供复制直链，支持 Shift+F10、Escape、焦点恢复和成功提示；自动复制失败时显示可手动复制的链接。
+  - 修改生成器与源模板，现有 Actions 每次 push 自动使用这些功能。
+  - 验证：新增 3 项测试先失败，实现后全部 12 项 Python 测试通过；36 个实际文件的链接、层级、大小和重复生成正确，JavaScript 语法与 actionlint 通过。
+  - 真实浏览器：7 组主要交互检查通过，包含实际右键复制与系统剪贴板粘贴核对，未截图。
+  - 受限复制场景发现长链接选中时输入框滚动关闭菜单，已修正；浏览器测试空间由用户接管，此修正尚未复测。
+
+- **涉及文件**：
+  - `scripts/generate_index.py`、`scripts/index.template.html`、`tests/test_generate_index.py`、`index.html`
+  - `memory/plan.md`、`memory/progress.md`、`memory/verify.md`、`docs/CHANGELOG.md`
+
+- **Git 提交**：待提交。
+
+---

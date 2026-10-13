@@ -39,6 +39,7 @@
   - 模板内置移动端、深色模式和辅助功能偏好样式；生成器读取此模板，现有 Actions 每次 push 自动使用新界面。
   - 验证：新增 3 项测试先失败，实现后全部 9 项 Python 测试通过；36 个实际文件的链接、层级与大小正确，连续生成字节一致；JavaScript 语法、actionlint 和 git diff 检查通过。
   - 真实浏览器：9 组目录、搜索、键盘、刷新和文件跳转检查通过，未执行截图或视觉验证。
+  - 云端：[Actions 运行 38425449859](https://github.com/OyamaMeek/Document/actions/runs/38425449859) 完成且结论为 `success`，已实际使用新模板生成页面。
 
 - **涉及文件**：
   - `scripts/index.template.html`、`scripts/generate_index.py`
@@ -46,6 +47,6 @@
   - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
   - `docs/CHANGELOG.md`
 
-- **Git 提交**：待提交；推送并检查云端运行后补记实际提交哈希。
+- **Git 提交**：`af91061 feat: add Apple-style file browser to generated index`，已普通推送至 `origin/main`，远端哈希一致；哈希补记通过后续文档提交保存。
 
 ---

@@ -6,4 +6,4 @@
 - [x] 实现文件浏览模板与安全元数据，生成当前 `index.html`，共有 36 个文件。
 - [x] 完整 9 项 Python 测试通过；全部文件链接、层级、大小和生成稳定性正确；JavaScript 语法和 actionlint 通过。
 - [x] ego-browser 的 9 组真实浏览器 DOM 行为检查通过，测试空间已关闭；记录位于 `.agent/validation/drive-browser-result.json`，未截图。
-- [ ] 提交、普通推送并检查云端 Actions；补记实际提交哈希。
+- [x] 提交 `af91061 feat: add Apple-style file browser to generated index` 并普通推送成功；云端运行 `38425449859` 完成，结论为 `success`；实际提交哈希和验证结果已补记。

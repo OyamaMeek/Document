@@ -1,17 +1,14 @@
-# 文件目录索引验证标准
+# 网盘式索引验证标准
 
-- `python3 -m unittest discover -s tests -v`：真实 Git 测试仓库覆盖根目录、嵌套目录、隐藏文件、中文和特殊字符路径、安全转义、未跟踪文件排除、文件增删、重复生成不变以及空仓库。
-- `python3 scripts/generate_index.py`：在当前仓库实际生成 `index.html`；HTML 解析后的链接逐一对应全部跟踪文件，目录层级正确。
-- 连续生成两次，文件字节完全一致，避免无内容变化的机器人提交。
-- 解析 workflow YAML 并检查触发器、写权限和执行命令；运行可用的 workflow 检查工具。
-- `git diff --check`、提交内容审查、普通 `git push` 退出码、远端提交核对。
-- 不执行视觉验证，不启用或部署 GitHub Pages；云端运行结果以实际可读取状态为准。
+- `python3 -m unittest discover -s tests -v`：保留层级、特殊字符、安全转义、未跟踪文件排除、增删、排序、空仓库与重复生成测试；新增类型、真实字节数、自身索引大小稳定性和可访问控件验证。
+- 实际仓库：每个文件链接对应一个跟踪文件且目标存在；连续生成字节一致。
+- JavaScript 语法检查；真实浏览器 DOM 验证根目录、嵌套导航、面包屑、返回上级、全局搜索、无结果状态、文件链接和键盘操作。
+- `actionlint`、`git diff --check`、提交内容检查、普通推送与远端提交核对；检查云端 Actions 状态。
+- 不截图，不执行视觉检查，不启用 Pages；浏览器交互检查不作为视觉验证证据。
 
 ## 已执行检查
 
-- 6 项生成器测试：先因缺少生成器失败，随后全部通过。
-- `actionlint 1.7.12 .github/workflows/update-index.yml`：退出码 0。
-- 已核实 `actions/checkout@v7` 标签实际存在。
-- 实际仓库 `index.html`：35 个链接完整对应全部跟踪文件，目标文件存在且目录层级正确；连续生成字节完全一致。
-- `git diff --check` 和提交内容检查通过；提交 `c801750` 普通推送成功，`origin/main` 的提交哈希与本地一致。
-- 云端运行 [38422278765](https://github.com/OyamaMeek/Document/actions/runs/38422278765) 已由此次 push 触发并完成，结论为 `success`；测试、生成及索引提交检查步骤均成功。
+- 新增 3 项测试先失败；完成实现后完整 9 项测试通过。
+- `.agent/validation/check_drive.py`：36 个真实文件的链接、层级和大小均正确，重复生成字节一致，`node --check` 检查生成页面内 JavaScript 通过。
+- ego-browser 实际验证 9 组行为：根目录和大小、嵌套目录与面包屑、浏览器前进后退、返回上级、全局搜索、无结果与清除、键盘和侧栏、深链接与刷新及实际跳转、无效目录与返回路径。
+- `actionlint .github/workflows/update-index.yml` 及 `git diff --check` 均通过。

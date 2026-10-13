@@ -4,6 +4,26 @@ from pathlib import Path
 from urllib.parse import quote
 
 
+FILE_TYPES = {
+    ".pdf": ("PDF 文档", "pdf"),
+    ".epub": ("电子书", "book"),
+    ".xlsx": ("电子表格", "sheet"),
+    ".xls": ("电子表格", "sheet"),
+    ".html": ("网页", "web"),
+    ".md": ("Markdown 文档", "text"),
+    ".txt": ("文本文件", "text"),
+    ".py": ("Python 源码", "code"),
+    ".js": ("JavaScript 源码", "code"),
+    ".json": ("JSON 文件", "code"),
+    ".yml": ("YAML 配置", "code"),
+    ".yaml": ("YAML 配置", "code"),
+    ".png": ("图片", "image"),
+    ".jpg": ("图片", "image"),
+    ".svg": ("矢量图片", "image"),
+    ".zip": ("压缩文件", "archive"),
+}
+
+
 def render_tree(tree, prefix=""):
     lines = ["<ul>"]
     entries = sorted(
@@ -13,9 +33,28 @@ def render_tree(tree, prefix=""):
         path = prefix + name
         label = escape(name)
         if children is None:
-            lines.append(f'<li><a href="./{quote(path, safe="/")}">{label}</a></li>')
+            file_type, icon = FILE_TYPES.get(Path(name).suffix.lower(), ("文件", "file"))
+            size = "" if path == "index.html" else str(Path(path).stat().st_size)
+            action = f'<a class="file-row" href="./{quote(path, safe="/")}">'
+            metadata = f'data-kind="file" data-type="{file_type}" data-size="{size}"'
+            size_label = f"{int(size):,} B" if size else "—"
         else:
-            lines.append(f"<li><details open><summary>{label}/</summary>")
+            file_type, icon = "文件夹", "folder"
+            metadata = 'data-kind="folder" data-type="文件夹" data-size=""'
+            action = '<details open><summary class="file-row">'
+            size_label = f"{len(children)} 项"
+        lines.append(f'<li data-path="{escape(path)}" {metadata}>')
+        lines.append(action)
+        lines.append(
+            f'<span class="row-name"><span class="file-icon icon-{icon}" aria-hidden="true">'
+            f'<svg viewBox="0 0 32 32"><use href="#icon-{"folder" if children is not None else "file"}"></use></svg>'
+            f'</span><span class="name-group"><span class="filename" title="{label}">{label}</span>'
+            f'</span></span><span class="row-type">{file_type}</span><span class="row-size">{size_label}</span>'
+        )
+        if children is None:
+            lines.append("</a></li>")
+        else:
+            lines.append("</summary>")
             lines.append(render_tree(children, path + "/"))
             lines.append("</details></li>")
     lines.append("</ul>")
@@ -35,32 +74,10 @@ def generate_index():
             directory = directory.setdefault(name, {})
         directory[parts[-1]] = None
 
-    page = """<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Document · 文件目录</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
-    ul { list-style: none; padding-left: 1.25rem; }
-    nav > ul { padding-left: 0; }
-    ul ul { border-left: 1px solid #ddd; margin-left: .35rem; }
-    li { margin: .3rem 0; }
-    summary { cursor: pointer; font-weight: 600; overflow-wrap: anywhere; }
-    a { color: #0969da; overflow-wrap: anywhere; }
-    a:hover { text-decoration-thickness: 2px; }
-  </style>
-</head>
-<body>
-  <h1>Document 文件目录</h1>
-  <p>点击文件夹可展开或收起，点击文件名可打开文件。共 FILE_COUNT 个文件。</p>
-  <nav aria-label="文件目录">
-FILE_TREE
-  </nav>
-</body>
-</html>
-""".replace("FILE_COUNT", str(len(paths))).replace("FILE_TREE", render_tree(tree))
+    template = Path(__file__).with_name("index.template.html").read_text(encoding="utf-8")
+    page = template.replace("<!-- FILE_COUNT -->", str(len(paths))).replace(
+        "<!-- FILE_TREE -->", render_tree(tree)
+    )
     Path("index.html").write_text(page, encoding="utf-8")
     print(f"已生成 index.html，共 {len(paths)} 个文件。")
 

@@ -17,9 +17,15 @@ class FileTreeParser(HTMLParser):
         self.links = []
         self.depth = 0
         self.open_directories = 0
+        self.entries = {}
+        self.controls = {}
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
+        if tag == "li" and "data-path" in attributes:
+            self.entries[attributes["data-path"]] = attributes
+        if "id" in attributes:
+            self.controls[attributes["id"]] = attributes
         if tag == "details":
             self.depth += 1
             self.open_directories += "open" in attributes
@@ -47,10 +53,10 @@ class GenerateIndexTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         return result
 
-    def track(self, name):
+    def track(self, name, content="test"):
         path = self.repository / name
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text("test", encoding="utf-8")
+        path.write_text(content, encoding="utf-8")
         self.git("add", "--", name)
 
     def generate(self):
@@ -126,6 +132,32 @@ class GenerateIndexTests(unittest.TestCase):
         page, parser = self.generate()
         self.assertEqual(parser.links, [])
         self.assertIn("<!DOCTYPE html>", page)
+
+    def test_drive_rows_include_real_size_and_file_type(self):
+        self.track("资料/报告.pdf", "你好")
+        self.track("site.html")
+        _, parser = self.generate()
+        self.assertIn("资料", parser.entries)
+        self.assertEqual(parser.entries["资料"]["data-kind"], "folder")
+        self.assertEqual(parser.entries["资料/报告.pdf"]["data-size"], "6")
+        self.assertEqual(parser.entries["资料/报告.pdf"]["data-type"], "PDF 文档")
+        self.assertEqual(parser.entries["site.html"]["data-type"], "网页")
+
+    def test_index_size_does_not_depend_on_previous_generated_page(self):
+        self.track("index.html", "old page")
+        first, parser = self.generate()
+        second, _ = self.generate()
+        self.assertIn("index.html", parser.entries)
+        self.assertEqual(parser.entries["index.html"]["data-size"], "")
+        self.assertEqual(first, second)
+
+    def test_accessible_drive_navigation_and_search_controls_are_generated(self):
+        _, parser = self.generate()
+        self.assertIn("file-search", parser.controls)
+        self.assertEqual(parser.controls["file-search"]["type"], "search")
+        self.assertEqual(parser.controls["file-search"]["aria-label"], "搜索全部文件和文件夹")
+        self.assertEqual(parser.controls["breadcrumbs"]["aria-label"], "当前位置")
+        self.assertEqual(parser.controls["folder-up"]["aria-label"], "返回上级目录")
 
 
 if __name__ == "__main__":

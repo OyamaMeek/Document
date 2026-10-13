@@ -26,3 +26,26 @@
 - **Git 提交**：`c801750 feat: generate clickable file index on push`，已普通推送至 `origin/main`，远端提交哈希已核对；本次哈希补记通过后续文档提交保存。
 
 ---
+
+## [2026-10-13 23:49] Apple 风格的网盘文件浏览界面
+
+- **需求/问题描述**：
+  > 使用 apple-design 优化 index.html，显示效果像网盘，并保证以后每次 push 自动生成的页面保持相同效果。
+
+- **实际实现的功能与改动**：
+  - 新增独立 HTML 模板，采用系统字体、浅灰背景、半透明侧栏、蓝色文件夹和分类文件图标，显示文件名称、类型与真实大小。
+  - 支持侧栏目录导航、嵌套目录、面包屑、返回上级、浏览器前进后退、全局即时搜索、清除搜索、键盘操作、目录深链接和无结果提示。
+  - 保留安全转义、URL 编码及全部 Git 跟踪文件；无 JavaScript 时仍可展开文件树并直接打开文件。
+  - 模板内置移动端、深色模式和辅助功能偏好样式；生成器读取此模板，现有 Actions 每次 push 自动使用新界面。
+  - 验证：新增 3 项测试先失败，实现后全部 9 项 Python 测试通过；36 个实际文件的链接、层级与大小正确，连续生成字节一致；JavaScript 语法、actionlint 和 git diff 检查通过。
+  - 真实浏览器：9 组目录、搜索、键盘、刷新和文件跳转检查通过，未执行截图或视觉验证。
+
+- **涉及文件**：
+  - `scripts/index.template.html`、`scripts/generate_index.py`
+  - `tests/test_generate_index.py`、`index.html`
+  - `memory/agents.md`、`memory/plan.md`、`memory/progress.md`、`memory/verify.md`
+  - `docs/CHANGELOG.md`
+
+- **Git 提交**：待提交；推送并检查云端运行后补记实际提交哈希。
+
+---

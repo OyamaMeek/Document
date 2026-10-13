@@ -13,3 +13,5 @@
 - `actionlint 1.7.12 .github/workflows/update-index.yml`：退出码 0。
 - 已核实 `actions/checkout@v7` 标签实际存在。
 - 实际仓库 `index.html`：35 个链接完整对应全部跟踪文件，目标文件存在且目录层级正确；连续生成字节完全一致。
+- `git diff --check` 和提交内容检查通过；提交 `c801750` 普通推送成功，`origin/main` 的提交哈希与本地一致。
+- 云端运行 [38422278765](https://github.com/OyamaMeek/Document/actions/runs/38422278765) 已由此次 push 触发并完成，结论为 `success`；测试、生成及索引提交检查步骤均成功。

@@ -1,0 +1,21 @@
+#!name=易校园广告拦截
+#!desc=基于拦截13个广告域名与开屏广告接口。HTTPS路径拦截需启用MITM并安装、信任自己的Surge证书；可通过模块开关控制拦截。
+
+[Rule]
+URL-REGEX,^https?://compus\.xiaofubao\.com/compus/advertising/getStartupAdvertising2(\?|$),REJECT
+DOMAIN,api-access.pangolin-sdk-toutiao.com,REJECT
+DOMAIN,mi.gdt.qq.com,REJECT
+DOMAIN,mobads.baidu.com,REJECT
+DOMAIN,sdk.1rtb.net,REJECT
+DOMAIN,api-dsp.8ziben.com,REJECT
+DOMAIN,adx-data.yfanads.com,REJECT
+DOMAIN,api.yfanads.com,REJECT
+DOMAIN,de.ad.gameley.com,REJECT
+DOMAIN,adservice.sigmob.cn,REJECT
+DOMAIN,s.funlinkads.com,REJECT
+DOMAIN,api.ssp.xcultur.com,REJECT
+DOMAIN,adx-bj.anythinktech.com,REJECT
+DOMAIN,bid.buluken.com,REJECT
+
+[MITM]
+hostname = %APPEND% compus.xiaofubao.com

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3f5f7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>机械基础 · 每日打卡</title>
+<meta name="description" content="机械基础每日练习：14 道机构自由度计算、46 个材料牌号，配有即时解析、错题本与学习记录。">
+<meta name="apple-mobile-web-app-title" content="机械打卡">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f3f5f7;--card:#fff;--ink:#20262e;--ink2:#35404e;--mute:#606b79;
+  --soft:#f0f3f6;--soft2:#e4e9ef;--accent:#1762cf;--accent-hover:#124fa8;
+  --accent-soft:#e9f0fc;--success:#246d4e;--success-soft:#eaf5ef;
+  --error:#a53630;--error-soft:#fbeeed;--white:#fff;--scrim:rgba(21,29,40,.42);
+  --radius:1.5rem;--ease:cubic-bezier(.2,.8,.2,1);
+  font:100%/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+  font-optical-sizing:auto;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;padding:0 0 3rem 12.5rem}
+body.modal-open{overflow:hidden}
+h1,h2,h3,p{margin:0}
+h1,h2,h3{text-wrap:balance;line-height:1.25;letter-spacing:-.035em}
+h1{font-size:clamp(2rem,3.2vw,2.75rem);font-weight:750}
+h2{font-size:1.25rem;font-weight:700}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer;touch-action:manipulation}
+button,a,input{outline-offset:4px}
+:focus-visible{outline:3px solid var(--accent)}
+button{transition:transform .18s var(--ease),opacity .18s var(--ease)}
+button:not(:disabled):active{transform:scale(.97);transition-duration:70ms}
+button:disabled{cursor:default}
+a{color:var(--accent)}
+::selection{background:var(--accent-soft);color:var(--ink)}
+.wrap{width:100%;max-width:1256px;margin:0 auto;padding:0 2.5rem}
+.mono{font-variant-numeric:tabular-nums}
+.skip{position:fixed;top:.5rem;left:1rem;z-index:60;transform:translateY(-160%);background:var(--card);padding:.75rem 1rem;border-radius:2rem}
+.skip:focus{transform:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+header.top{padding:3rem 0 1.5rem}
+.heading-row{display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.page-description{font-size:1rem;margin-top:.5rem;color:var(--mute)}
+.day-count{font-size:1rem;font-weight:650;white-space:nowrap;background:var(--card);padding:.65rem 1rem;border-radius:2rem}
+.day-count strong{font-size:1.5rem;letter-spacing:-.04em;margin:0 .2rem;font-variant-numeric:tabular-nums}
+.overview{margin-top:1.75rem;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:2rem;background:var(--card);padding:1.25rem 1.5rem;border-radius:var(--radius)}
+.progress-caption{display:flex;align-items:center;gap:.75rem;font-size:.875rem;white-space:nowrap}
+.progress-caption b{font-size:1.125rem;font-variant-numeric:tabular-nums}
+.progress-caption span{color:var(--mute)}
+.dots{display:flex;gap:.375rem}
+.dots i{flex:1;height:.5rem;background:var(--soft2);border-radius:1rem}
+.dots i.done{background:var(--accent)}
+.dots i.now{background:var(--accent);opacity:.4}
+.study-grid{display:grid;grid-template-columns:minmax(0,1.06fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.card{background:var(--card);border-radius:var(--radius);padding:1.75rem;margin-bottom:1.25rem;min-width:0}
+.study-grid .card{margin:0}
+#mqCard{position:sticky;top:1.5rem}
+.tag{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}
+.tag .cnt{font-size:.8125rem;color:var(--mute);white-space:nowrap;font-variant-numeric:tabular-nums}
+.svgwrap{background:var(--soft);border-radius:1rem;padding:1.5rem .75rem;margin-bottom:1.25rem}
+svg{display:block;width:100%;height:auto}
+.svgwrap svg{max-height:220px}
+.qtext{font-size:1rem;line-height:1.8}
+.qtext b{font-weight:650}
+.hint{font-size:.875rem;color:var(--mute);margin-top:.75rem}
+.blanks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.625rem;margin-top:1.5rem}
+.blank{background:var(--soft);border-radius:.75rem;padding:.75rem 1rem}
+.blank label{display:block;font-size:.8125rem;line-height:1.4;color:var(--ink2)}
+.blank label i{font-style:normal;color:var(--mute);margin-left:.375rem}
+.blank .r{display:flex;align-items:center;gap:.375rem;margin-top:.125rem}
+.blank input{flex:1;width:0;min-width:0;height:44px;border:0;text-align:left;font-size:1.25rem;font-weight:650;background:transparent;padding:0;font-variant-numeric:tabular-nums;border-radius:.25rem}
+.blank input::placeholder{color:var(--mute);font-weight:400}
+.blank:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.blank .mk{flex:none;font-size:.75rem;font-weight:600}
+.blank.ok{background:var(--success-soft)}
+.blank.ok .mk{color:var(--success)}
+.blank.no{background:var(--error-soft)}
+.blank.no .mk{color:var(--error)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.75rem 1.25rem;border-radius:2rem;font-size:.9375rem;font-weight:600}
+.btn.sub{width:100%;background:var(--accent);color:var(--white);margin-top:1.25rem}
+.btn.ghost{background:var(--soft);color:var(--ink)}
+.btn.sub:disabled,.navd:disabled,.navg:disabled{background:var(--soft);color:var(--mute)}
+.sol{margin-top:1.5rem;display:none}
+.sol.on{display:block}
+.verdict{font-size:1rem;font-weight:650;margin-bottom:.75rem}
+.verdict.ok{color:var(--success)}
+.verdict.bad{color:var(--error)}
+.formula{font-size:.875rem;background:var(--soft);padding:1rem;border-radius:.75rem;margin-bottom:1rem;line-height:1.9;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.formula b{display:block;font-weight:500}
+.steps{padding-left:1.25rem;margin:0;font-size:.9375rem;line-height:1.8}
+.steps li+li{margin-top:.5rem}
+.tipbox{margin-top:1rem;font-size:.875rem;color:var(--mute)}
+.qbar{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:.25rem;margin:-.25rem -.25rem .5rem}
+.qbar button{height:44px;min-width:0;padding:0;font-size:.8125rem;border-radius:.625rem;background:var(--soft);font-variant-numeric:tabular-nums}
+.qbar button.ok{color:var(--success);background:var(--success-soft)}
+.qbar button.no{color:var(--error);background:var(--error-soft)}
+.qbar button.cur{background:var(--ink);color:var(--white)}
+.qnote{font-size:.8125rem;color:var(--mute);margin:.75rem 0 1.5rem}
+.stem{font-size:1.125rem;line-height:1.8;font-weight:550;min-height:5rem}
+.stem .txt .g{font-weight:750}
+.opts{margin:1.25rem 0 0;display:flex;flex-direction:column;gap:.625rem}
+.opt{text-align:left;background:var(--soft);border-radius:1rem;padding:1rem;font-size:1rem;line-height:1.6;display:flex;gap:.75rem;align-items:flex-start;min-height:56px;width:100%}
+.opt .lb{flex:none;width:1.5rem;height:1.5rem;border-radius:50%;background:var(--card);color:var(--ink2);font-size:.8125rem;font-weight:650;display:flex;align-items:center;justify-content:center;margin-top:.0625rem}
+.opt .mk{margin-left:auto;font-size:.8125rem;font-weight:600;flex:none;white-space:nowrap}
+.opt.ok{color:var(--success);background:var(--success-soft)}
+.opt.ok .lb{background:var(--success);color:var(--white)}
+.opt.no{color:var(--error);background:var(--error-soft)}
+.opt.no .lb{background:var(--error);color:var(--white)}
+.opt.dim{color:var(--mute)}
+.fb{margin:1rem 0 0;font-size:.9375rem;line-height:1.8;padding:1rem;display:none;background:var(--success-soft);border-radius:1rem}
+.fb.on{display:block}
+.fb.no{background:var(--error-soft)}
+.fb .hd{font-weight:650}
+.fb .why{display:block;margin-top:.375rem}
+.mnav{display:flex;gap:.75rem;margin-top:1.25rem}
+.mnav button{flex:1;min-height:48px;border-radius:2rem;font-size:.9375rem;font-weight:600;padding:.625rem}
+.navg{background:var(--soft)}
+.navd{background:var(--ink);color:var(--white)}
+.finish{margin:1.5rem 0 0;padding:1.25rem;background:var(--soft);border-radius:1rem}
+.finish .btn{margin-top:0}
+.finish .btn:disabled{background:var(--soft2)}
+.goalline{text-align:center;font-size:.8125rem;color:var(--mute);margin-top:.75rem}
+.done-card{max-width:640px;padding:3rem;margin:1rem auto}
+.done-card .big{font-size:1.75rem;font-weight:700;letter-spacing:-.035em}
+.done-card p{margin-top:1rem}
+.actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem}
+.actions .btn{flex:1;margin:0}
+nav{position:fixed;inset:0 auto 0 0;width:12.5rem;z-index:20;background:var(--card);padding:2.5rem 1rem;display:flex;flex-direction:column}
+.brand{display:flex;align-items:center;gap:.625rem;padding:0 .75rem;font-size:1.125rem;font-weight:750;letter-spacing:-.04em}
+.brand svg{width:28px;height:28px;color:var(--ink)}
+.brand-note{font-size:.8125rem;color:var(--mute);margin:.5rem .75rem 2.5rem}
+nav .inner{display:flex;flex-direction:column;gap:.5rem}
+nav button{display:flex;align-items:center;gap:.875rem;min-height:48px;padding:.875rem 1rem;text-align:left;font-size:.9375rem;color:var(--mute);border-radius:.875rem}
+nav .ico{width:20px;height:20px;flex:none;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+nav button.on{background:var(--accent-soft);color:var(--accent);font-weight:650}
+.nav-note{font-size:.8125rem;color:var(--mute);margin:auto .75rem 0;padding-top:2rem;line-height:1.8}
+.sec-title{font-size:1.125rem;font-weight:650;margin:1.75rem 0 1rem;letter-spacing:-.02em}
+.sec-title:first-child{margin-top:0}
+.search-panel{margin-bottom:2rem}
+.search-label{display:block;font-weight:600;margin-bottom:.75rem}
+.search{width:100%;height:56px;border:0;border-radius:1rem;background:var(--card);padding:0 1.25rem;font-size:1rem}
+.search-meta{font-size:.875rem;color:var(--mute);margin-top:.75rem}
+.lib-item{padding:1.25rem 1rem;display:grid;grid-template-columns:minmax(120px,1fr) 3fr;gap:1.5rem;border-radius:.75rem}
+.lib-item:nth-child(even){background:var(--soft)}
+.lib-item .grade{font-size:1.125rem;font-weight:700;line-height:1.4;overflow-wrap:anywhere}
+.lib-item .grade span{display:block;font-size:.8125rem;font-weight:400;color:var(--mute);margin-top:.375rem}
+.lib-item .m{font-size:1rem}
+.lib-item .u{font-size:.875rem;color:var(--mute);margin-top:.375rem}
+.empty{background:var(--card);border-radius:var(--radius);padding:3rem 1.5rem;text-align:center;color:var(--mute);font-size:1rem;line-height:1.9}
+.empty h2{color:var(--ink);margin-bottom:.75rem}
+.empty .btn{margin-top:1.5rem;color:var(--ink)}
+.wq{padding:1.25rem;border-radius:1rem;background:var(--soft)}
+.wq+.wq{margin-top:1rem}
+.wq .s{font-size:1rem;font-weight:600;padding-right:4rem}
+.wq .a{font-size:.9375rem;color:var(--ink2);margin-top:.75rem;line-height:1.9;overflow-wrap:anywhere}
+.wq .a em{font-style:normal;color:var(--success);font-weight:650}
+.wq .del{float:right;min-height:44px;min-width:56px;color:var(--mute);font-size:.875rem;background:var(--card);border-radius:2rem;padding:.5rem .75rem}
+.stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.25rem;background:var(--card);border-radius:var(--radius);padding:2rem}
+.stat .v{font-size:clamp(1.75rem,3vw,2.75rem);font-weight:700;letter-spacing:-.05em;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .k{font-size:.875rem;color:var(--mute);margin-top:.625rem}
+.rec{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:.9375rem;padding:1rem;border-radius:.75rem}
+.rec:nth-child(even){background:var(--soft)}
+.rec .sc{font-variant-numeric:tabular-nums;color:var(--mute)}
+.note{font-size:.9375rem;color:var(--mute);line-height:1.9}
+.notes p+p{margin-top:1rem}
+.danger{color:var(--error)!important}
+.page-footer{font-size:.8125rem;color:var(--mute);padding:2rem 0 0}
+.mask{position:fixed;inset:0;background:var(--scrim);z-index:40;display:flex;align-items:center;justify-content:center;padding:1.25rem;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s var(--ease)}
+.mask.on{opacity:1;visibility:visible;pointer-events:auto}
+.modal{background:var(--card);border-radius:1.75rem;padding:2rem;width:100%;max-width:400px;text-align:center;max-height:calc(100dvh - 2.5rem);overflow-y:auto}
+.modal .mark{font-size:.9375rem;font-weight:650;color:var(--success);margin-bottom:1rem}
+.modal h3{font-size:1.5rem}
+.modal .score{font-size:4rem;font-weight:700;letter-spacing:-.05em;margin:1.25rem 0 .5rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.modal .score span{font-size:1rem;color:var(--mute);font-weight:500;letter-spacing:0}
+.modal p{font-size:.9375rem;color:var(--mute);margin-top:.75rem;line-height:1.8}
+.modal .row{display:flex;gap:.75rem;margin-top:1.5rem}
+.modal .row .btn{flex:1;margin:0}
+@media(hover:hover){
+  nav button:not(.on):hover,.btn.ghost:hover,.navg:not(:disabled):hover{background:var(--soft2)}
+  .btn.sub:not(:disabled):hover{background:var(--accent-hover)}
+  .opt:not(:disabled):hover,.qbar button:not(.cur):hover{background:var(--accent-soft)}
+  .navd:not(:disabled):hover{opacity:.85}
+}
+@media(max-width:1100px){
+  body{padding-left:10rem}
+  nav{width:10rem;padding:2rem .625rem}
+  nav button{padding:.875rem .75rem;gap:.625rem}
+  .brand{font-size:1rem;padding:0 .5rem}
+  .brand-note{margin-left:.5rem}
+  .wrap{padding:0 1.5rem}
+  .study-grid{grid-template-columns:1fr;max-width:720px;margin:0 auto}
+  #mqCard{position:static}
+  .svgwrap svg{max-height:260px}
+}
+@media(max-width:700px){
+  body{padding:0 0 calc(6rem + env(safe-area-inset-bottom))}
+  .wrap{padding:0 1rem}
+  header.top{padding:calc(1.75rem + env(safe-area-inset-top)) 0 1.25rem}
+  .heading-row{gap:.5rem}
+  .page-description{font-size:.875rem;max-width:23rem}
+  .day-count{padding:.5rem .75rem;font-size:.8125rem}
+  .day-count strong{font-size:1.25rem}
+  .overview{grid-template-columns:1fr;gap:.875rem;padding:1.125rem;margin-top:1.25rem;border-radius:1.25rem}
+  .progress-caption{justify-content:space-between}
+  .dots{gap:.25rem}
+  .card{padding:1.25rem;border-radius:1.25rem}
+  .study-grid{gap:1rem}
+  .tag{gap:.5rem;margin-bottom:1.25rem;align-items:flex-start}
+  .tag h2{font-size:1.125rem}
+  .tag .cnt{padding-top:.125rem}
+  .svgwrap{padding:1rem .5rem}
+  .blank{padding:.625rem .75rem}
+  .qbar{grid-template-columns:repeat(5,minmax(0,1fr));gap:.375rem;margin:0 0 .75rem}
+  .stem{font-size:1.0625rem;min-height:0}
+  .opt{padding:.875rem;gap:.625rem}
+  .opt .mk{font-size:.75rem}
+  .finish{padding:1rem}
+  nav{inset:auto 0 0;width:100%;padding:.375rem max(.5rem,env(safe-area-inset-right)) calc(.375rem + env(safe-area-inset-bottom)) max(.5rem,env(safe-area-inset-left))}
+  nav .inner{flex-direction:row;gap:.25rem;width:100%;max-width:520px;margin:0 auto}
+  nav button{flex:1;min-width:0;min-height:60px;flex-direction:column;gap:.25rem;padding:.5rem .125rem;font-size:.8125rem;border-radius:.75rem}
+  .brand,.brand-note,.nav-note{display:none}
+  .lib-item{grid-template-columns:1fr;gap:.625rem;padding:1rem .75rem}
+  .lib-item .grade{font-size:1.125rem}
+  .lib-item .grade span{display:inline;font-size:.8125rem;margin-left:.75rem}
+  .stat-grid{gap:.625rem;padding:1.5rem 1rem}
+  .stat .k{font-size:.8125rem}
+  .rec{padding:.75rem .25rem;gap:.375rem}
+  .done-card{padding:2rem 1.25rem}
+  .modal{padding:1.75rem 1.25rem}
+  .modal h3{font-size:1.25rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  button:not(:disabled):active{transform:none}
+}
+@media(prefers-contrast:more){
+  :root{--mute:#36414e;--soft:#e8ecf1;--soft2:#d1d9e3}
+  .qbar button.cur{outline:2px solid var(--ink);outline-offset:2px}
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#view">跳到学习内容</a>
+<div class="wrap" id="app">
+  <header class="top" id="hd"></header>
+  <main id="view" tabindex="-1"></main>
+  <footer class="page-footer">机械基础（少学时）第 3 版 · 第二模块</footer>
+</div>
+
+<nav aria-label="学习导航">
+  <div class="brand"><svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M5 7h7l3 7h8M5 21h7l3-7M5 7v14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="7" r="2" fill="currentColor"/><circle cx="5" cy="21" r="2" fill="currentColor"/><circle cx="15" cy="14" r="2" fill="currentColor"/></svg>机械基础</div>
+  <p class="brand-note">每日一练，循序掌握</p>
+  <div class="inner">
+    <button data-tab="home" class="on" aria-current="page"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4m8-4v4M4 10h16m-12 5 3 3 5-5"/></svg>每日练习</button>
+    <button data-tab="wrong"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h13a1 1 0 0 1 1 1v17H6a3 3 0 0 1-3-3V5a2 2 0 0 1 2-2Zm-2 15a3 3 0 0 1 3-3h13M9 7h6m-6 4h4"/></svg>错题本</button>
+    <button data-tab="lib"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5M7 10h6m-3-3v6"/></svg>牌号速查</button>
+    <button data-tab="me"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10m7 10V4m7 16v-7"/></svg>学习记录</button>
+  </div>
+  <p class="nav-note">14 天学习计划<br>进度保存在当前浏览器</p>
+</nav>
+
+<div class="mask" id="mask" inert><div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="finishTitle"></div></div>
+<div id="status" class="sr-only" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   机械基础（少学时）第3版 · 第二模块
+   自由度题：填空式（构件总数 / 活动构件数 / 虚约束 / 局部自由度 /
+             复合铰链 / 低副数 / 高副数 / 自由度）
+   牌号题：46 个牌号，两种问法各占一半
+   机构图保留教材黑白线稿
+   ========================================================= */
+
+/* ---------- 材料牌号库 ---------- */
+const MAT = [
+ {g:'Q215',c:'碳素结构钢',m:'屈服强度不低于 215 MPa 的碳素结构钢',u:'薄钢板、钢管、焊接结构件'},
+ {g:'Q235',c:'碳素结构钢',m:'屈服强度不低于 235 MPa 的碳素结构钢',u:'建筑构件、螺钉螺母、冲压件（用量最大的普通碳素钢）'},
+ {g:'Q275',c:'碳素结构钢',m:'屈服强度不低于 275 MPa 的碳素结构钢',u:'轴、齿轮毛坯、型钢'},
+ {g:'Q345',c:'低合金高强度结构钢',m:'屈服强度不低于 345 MPa 的低合金高强度结构钢',u:'桥梁、车辆、压力容器、大型工程结构'},
+ {g:'08F',c:'优质碳素结构钢',m:'平均碳质量分数 0.08% 的沸腾钢',u:'冲压件、深冲件（塑性好）'},
+ {g:'20',c:'优质碳素结构钢',m:'平均碳质量分数 0.20% 的优质碳素结构钢',u:'渗碳件、齿轮、轴套、焊接件'},
+ {g:'45',c:'优质碳素结构钢',m:'平均碳质量分数 0.45% 的优质碳素结构钢',u:'轴、齿轮、连杆（调质处理后使用）'},
+ {g:'60',c:'优质碳素结构钢',m:'平均碳质量分数 0.60% 的优质碳素结构钢',u:'弹簧、轧辊、犁铧'},
+ {g:'60Si2Mn',c:'弹簧钢',m:'平均碳质量分数 0.60%、硅约 2%，锰小于 1.5% 的弹簧钢',u:'板弹簧、螺旋弹簧、弹簧钢丝'},
+ {g:'65Mn',c:'弹簧钢',m:'平均碳质量分数 0.65%、锰约 1% 的弹簧钢',u:'弹簧、刀具、耐磨零件'},
+ {g:'40Cr',c:'合金结构钢',m:'平均碳质量分数 0.40%、铬小于 1.5% 的合金结构钢',u:'齿轮、轴、连杆（典型调质钢）'},
+ {g:'20CrMnTi',c:'合金结构钢',m:'平均碳质量分数 0.20%，铬、锰、钛均小于 1.5% 的合金结构钢',u:'汽车、拖拉机的渗碳齿轮、齿轮轴'},
+ {g:'35CrMo',c:'合金结构钢',m:'平均碳质量分数 0.35%，铬、钼均小于 1.5% 的合金结构钢',u:'高强度螺栓、轴、大齿轮'},
+ {g:'38CrMoAlA',c:'合金结构钢',m:'平均碳质量分数 0.38%，铬、钼、铝均小于 1.5% 的高级优质合金结构钢',u:'氮化钢，用于精密丝杠、镗床主轴'},
+ {g:'T8',c:'碳素工具钢',m:'平均碳质量分数 0.80% 的碳素工具钢',u:'冲头、錾子、木工工具'},
+ {g:'T10A',c:'碳素工具钢',m:'平均碳质量分数 1.0% 的高级优质碳素工具钢',u:'手用锯条、丝锥、铰刀、量具'},
+ {g:'T12',c:'碳素工具钢',m:'平均碳质量分数 1.2% 的碳素工具钢',u:'锉刀、刮刀、低速切削刀具'},
+ {g:'9SiCr',c:'合金工具钢',m:'平均碳质量分数 0.9%，硅、铬均小于 1.5% 的合金工具钢',u:'丝锥、板牙、铰刀、冷冲模'},
+ {g:'Cr12MoV',c:'合金工具钢',m:'铬约 12%，钼、钒均小于 1.5% 的合金工具钢',u:'冷冲模、冷挤压模、剪刀片'},
+ {g:'5CrMnMo',c:'合金工具钢',m:'平均碳质量分数 0.5%，铬、锰、钼均小于 1.5% 的合金工具钢',u:'热锻模、热冲模'},
+ {g:'W18Cr4V',c:'高速钢',m:'钨约 18%、铬约 4%、钒小于 1.5% 的高速工具钢',u:'车刀、钻头、铣刀、拉刀'},
+ {g:'GCr15',c:'滚动轴承钢',m:'铬约 1.5% 的滚动轴承钢（含碳约 1% 按规定不标出）',u:'轴承套圈、滚珠、滚柱'},
+ {g:'1Cr18Ni9',c:'不锈钢',m:'平均碳质量分数 0.1%、铬约 18%、镍约 9% 的不锈钢',u:'耐酸容器、医疗器械、餐具'},
+ {g:'06Cr19Ni10',c:'不锈钢',m:'平均碳质量分数 0.06%、铬约 19%、镍约 10% 的不锈钢',u:'食品设备、厨具、耐蚀结构件（对应 304）'},
+ {g:'4Cr13',c:'不锈钢',m:'平均碳质量分数 0.4%、铬约 13% 的不锈钢',u:'刃具、量具、医疗器械'},
+ {g:'HT150',c:'灰铸铁',m:'最低抗拉强度 150 MPa 的灰铸铁',u:'机座、箱体、支架、底座'},
+ {g:'HT200',c:'灰铸铁',m:'最低抗拉强度 200 MPa 的灰铸铁',u:'机床床身、气缸体、箱体'},
+ {g:'HT250',c:'灰铸铁',m:'最低抗拉强度 250 MPa 的灰铸铁',u:'液压阀体、齿轮箱、重型机座'},
+ {g:'QT400-18',c:'球墨铸铁',m:'最低抗拉强度 400 MPa、断后伸长率 18% 的球墨铸铁',u:'承受冲击的曲轴、齿轮、阀体'},
+ {g:'QT600-3',c:'球墨铸铁',m:'最低抗拉强度 600 MPa、断后伸长率 3% 的球墨铸铁',u:'高强度曲轴、齿轮、轧辊'},
+ {g:'KTH300-06',c:'可锻铸铁',m:'最低抗拉强度 300 MPa、断后伸长率 6% 的黑心可锻铸铁',u:'管接头、汽车后桥壳、脚手架扣件'},
+ {g:'KTZ450-06',c:'可锻铸铁',m:'最低抗拉强度 450 MPa、断后伸长率 6% 的珠光体可锻铸铁',u:'齿轮、连杆、凸轮'},
+ {g:'H62',c:'黄铜',m:'平均铜质量分数 62% 的黄铜（余量为锌）',u:'销、垫片、散热器、装饰件'},
+ {g:'H68',c:'黄铜',m:'平均铜质量分数 68% 的黄铜',u:'深冲件、弹壳、波纹管'},
+ {g:'HPb59-1',c:'黄铜',m:'平均铜质量分数 59%、铅约 1% 的铅黄铜',u:'钟表零件、螺钉、易切削件'},
+ {g:'QSn4-3',c:'青铜',m:'平均锡质量分数 4%、锌约 3% 的锡青铜',u:'耐磨轴承、蜗轮、弹簧'},
+ {g:'QAl9-4',c:'青铜',m:'平均铝质量分数 9%、铁约 4% 的铝青铜',u:'高强度耐磨件、蜗轮、齿轮'},
+ {g:'ZCuSn10P1',c:'青铜',m:'平均锡质量分数 10%、磷约 1% 的铸造锡青铜',u:'滑动轴承、蜗轮、轴瓦'},
+ {g:'ZAlSi12',c:'铸造铝合金',m:'平均硅质量分数 12% 的铸造铝硅合金（ZL102）',u:'铸造成形的壳体、气缸盖、活塞'},
+ {g:'ZAlCu4',c:'铸造铝合金',m:'平均铜质量分数 4% 的铸造铝铜合金（ZL203）',u:'高强度铸件、航空零件'},
+ {g:'2A12',c:'变形铝合金',m:'以铜、镁为主要合金元素的硬铝（旧牌号 LY12）',u:'飞机蒙皮、铆钉、受力构件'},
+ {g:'7A04',c:'变形铝合金',m:'以锌、镁、铜为主要合金元素的超硬铝（旧牌号 LC4）',u:'飞机起落架、高强度结构件'},
+ {g:'5A02',c:'变形铝合金',m:'以锰为主要合金元素的防锈铝（旧牌号 LF2）',u:'油箱、导管、焊接容器'},
+ {g:'1060',c:'纯金属',m:'铝质量分数 99.60% 的工业纯铝',u:'导线、铝箔、散热器、日用制品'},
+ {g:'T2',c:'纯金属',m:'铜质量分数不低于 99.90% 的纯铜',u:'电线电缆、电极、蒸发器'},
+ {g:'ZChSnSb11-6',c:'轴承合金',m:'锡约 11%、锑约 6% 的铸造轴承合金（巴氏合金）',u:'滑动轴承的轴瓦内衬'}
+];
+
+/* ---------- 黑白线稿绘图工具 ---------- */
+const C={ink:'#141414',rod:'#1f1f1f',fill:'#f4f4f4',soft:'#eeeeee',ht:'#a0a0a0',white:'#fff'};
+const rod=(x1,y1,x2,y2,w=6)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${C.rod}" stroke-width="${w}" stroke-linecap="round"/>`;
+const jt=(x,y,label,dx=9,dy=-9)=>`<circle cx="${x}" cy="${y}" r="5.4" fill="#fff" stroke="${C.ink}" stroke-width="2"/><circle cx="${x}" cy="${y}" r="1.5" fill="${C.ink}"/>`+
+  (label?`<text x="${x+dx}" y="${y+dy}" font-size="13" font-weight="700" fill="${C.ink}">${label}</text>`:'');
+const bigjt=(x,y,label,dx=9,dy=-10)=>`<circle cx="${x}" cy="${y}" r="9" fill="none" stroke="${C.ink}" stroke-width="1.3"/>`+jt(x,y,label,dx,dy);
+const gnd=(x1,x2,y)=>{let s=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${C.ink}" stroke-width="1.6"/>`;
+  for(let x=x1+4;x<x2;x+=11){s+=`<line x1="${x}" y1="${y+9}" x2="${x+7}" y2="${y}" stroke="${C.ht}" stroke-width="1.1"/>`}return s};
+const sup=(x,y,base=14)=>{let s=`<polygon points="${x},${y} ${x-9},${y+base} ${x+9},${y+base}" fill="none" stroke="${C.ink}" stroke-width="1.5"/>`;
+  s+=`<line x1="${x-15}" y1="${y+base}" x2="${x+15}" y2="${y+base}" stroke="${C.ink}" stroke-width="1.6"/>`;
+  for(let i=-13;i<13;i+=7){s+=`<line x1="${x+i}" y1="${y+base+8}" x2="${x+i+6}" y2="${y+base}" stroke="${C.ht}" stroke-width="1.1"/>`}return s};
+const frame=(x,y,yb,bw=24)=>{let s=`<line x1="${x}" y1="${y}" x2="${x}" y2="${yb}" stroke="${C.ink}" stroke-width="1.4"/>`;
+  s+=`<line x1="${x-bw}" y1="${yb}" x2="${x+bw}" y2="${yb}" stroke="${C.ink}" stroke-width="1.6"/>`;
+  for(let i=-bw+3;i<bw;i+=8){s+=`<line x1="${x+i}" y1="${yb+8}" x2="${x+i+6}" y2="${yb}" stroke="${C.ht}" stroke-width="1.1"/>`}return s};
+const hubfix=(x,y)=>{let s=`<polygon points="${x},${y} ${x-7},${y+13} ${x+7},${y+13}" fill="none" stroke="${C.ink}" stroke-width="1.3"/>`;
+  s+=`<line x1="${x-11}" y1="${y+13}" x2="${x+11}" y2="${y+13}" stroke="${C.ink}" stroke-width="1.4"/>`;
+  for(let i=-8;i<8;i+=5){s+=`<line x1="${x+i}" y1="${y+18}" x2="${x+i+5}" y2="${y+13}" stroke="${C.ht}" stroke-width="1"/>`}return s};
+const slider=(cx,cy,w=38,h=24)=>{
+  let s=`<rect x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="2" fill="#fff" stroke="${C.rod}" stroke-width="1.6"/>`;
+  s+=jt(cx,cy,'');return s};
+const rail=(x1,x2,y)=>{let s=`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${C.ink}" stroke-width="1.8"/>`;
+  for(let x=x1+3;x<x2;x+=10){s+=`<line x1="${x}" y1="${y+8}" x2="${x+6}" y2="${y}" stroke="${C.ht}" stroke-width="1.1"/>`}return s};
+const gear=(x,y,r,n=18,label='')=>{
+  let s='';
+  for(let i=0;i<n;i++){const a=i*2*Math.PI/n;
+    s+=`<line x1="${x+Math.cos(a)*(r-5)}" y1="${y+Math.sin(a)*(r-5)}" x2="${x+Math.cos(a)*(r+4)}" y2="${y+Math.sin(a)*(r+4)}" stroke="${C.ink}" stroke-width="2.4"/>`}
+  s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="${C.fill}" stroke="${C.ink}" stroke-width="1.5"/>`;
+  s+=`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${C.ht}" stroke-width="1" stroke-dasharray="5 4"/>`;
+  s+=jt(x,y,label);return s};
+const cam=(cx,cy,r,ax,ay)=>{
+  let s=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.fill}" stroke="${C.ink}" stroke-width="1.6"/>`;
+  s+=`<circle cx="${ax}" cy="${ay}" r="7" fill="#fff" stroke="${C.ink}" stroke-width="1.4"/>`;
+  s+=`<circle cx="${ax}" cy="${ay}" r="2" fill="${C.ink}"/>`;
+  s+=`<line x1="${ax}" y1="${ay}" x2="${cx}" y2="${cy}" stroke="${C.ht}" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+  return s};
+const txt=(x,y,t,size=12,color=C.ink,anchor='start')=>`<text x="${x}" y="${y}" font-size="${size}" font-weight="600" fill="${color}" text-anchor="${anchor}">${t}</text>`;
+
+/* ---------- 自由度题库（8 空填空） ---------- */
+const DOF=[
+{
+  name:'曲柄滑块机构', q:'图示为曲柄滑块机构。曲柄 AB 绕 A 点转动，通过连杆 BC 带动滑块 C 沿水平导路往复移动。',
+  n:3, pl:4, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 活动构件 + 机架 = 3 + 1 = <b>4</b>。',
+         '活动构件数 <b>n = 3</b>：曲柄 1、连杆 2、滑块 3。',
+         '低副 <b>P_L = 4</b>：A、B、C 三处转动副 + 滑块与导路之间的移动副。',
+         '高副 <b>P_H = 0</b>；无局部自由度、无虚约束、无复合铰链。'],
+  tip:'考点：移动副只算 1 个低副；机架计入构件总数、不计入活动构件。',
+  svg:()=>rail(180,320,208)+gnd(30,180,196)+sup(78,196,14)+
+      rod(78,196,112,140)+rod(112,140,258,195)+slider(258,195,38,24)+
+      jt(78,196,'A',-6,-11)+jt(112,140,'B',9,-8)+jt(258,195,'C',9,-10), vb:'0 92 340 150'
+},
+{
+  name:'铰链四杆机构', q:'图示为铰链四杆机构，AB 为曲柄、BC 为连杆、CD 为摇杆，AD 为机架。',
+  n:3, pl:4, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 3 + 1 = <b>4</b>。',
+         '活动构件数 <b>n = 3</b>：曲柄 AB、连杆 BC、摇杆 CD。',
+         '低副 <b>P_L = 4</b>：A、B、C、D 四个转动副（每处只有 2 个构件，不是复合铰链）。',
+         '高副 <b>P_H = 0</b>；无局部自由度、无虚约束。'],
+  tip:'考点：机架不计入活动构件；每处铰接点只算 1 个转动副。',
+  svg:()=>gnd(40,310,192)+sup(72,192,14)+sup(262,192,14)+
+      rod(72,192,72,96)+rod(72,96,206,112)+rod(206,112,262,192)+
+      jt(72,192,'A',-22,-6)+jt(72,96,'B',9,-8)+jt(206,112,'C',7,-10)+jt(262,192,'D',9,-12), vb:'20 68 320 150'
+},
+{
+  name:'铰链五杆机构', q:'图示为铰链五杆机构，由 4 根活动杆与机架组成。',
+  n:4, pl:5, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 4 + 1 = <b>5</b>。',
+         '活动构件数 <b>n = 4</b>：杆 AB、BC、CD、DE。',
+         '低副 <b>P_L = 5</b>：A、B、C、D、E 五个转动副。',
+         'F = 3×4 − 2×5 = <b>2</b>，需要两个原动件，运动才确定。'],
+  tip:'考点：F＞1 时须给出两个独立输入，否则机构运动不确定。',
+  svg:()=>gnd(30,315,192)+sup(46,192,14)+sup(292,192,14)+
+      rod(46,192,46,100)+rod(46,100,148,42)+rod(148,42,248,100)+rod(248,100,292,192)+
+      jt(46,192,'A',-18,-8)+jt(46,100,'B',9,-9)+jt(148,42,'C',-16,-8)+jt(248,100,'D',9,-9)+jt(292,192,'E',6,-12), vb:'20 20 320 200'
+},
+{
+  name:'摆动导杆机构', q:'图示为摆动导杆机构。曲柄 AB 绕 A 转动，端部滑块 B 在导杆导槽中滑动，带动导杆绕 C 点摆动。',
+  n:3, pl:4, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 3 + 1 = <b>4</b>。',
+         '活动构件数 <b>n = 3</b>：曲柄 1、滑块 2、导杆 3。',
+         '低副 <b>P_L = 4</b>：A 转动副、B 转动副（曲柄与滑块）、滑块与导杆的移动副、C 转动副。',
+         '高副 <b>P_H = 0</b>；滑块在导槽内滑动属移动副，不是高副。'],
+  tip:'考点：滑块与导杆之间是移动副；B 处是滑块与曲柄的转动副。',
+  svg:()=>gnd(30,315,190)+sup(78,190,14)+sup(250,190,14)+
+      rod(250,190,100,68,9)+rod(78,190,183,135)+
+      `<polygon points="174.7,116.6 163.3,130.6 191.3,153.4 202.7,139.4" fill="#fff" stroke="${C.rod}" stroke-width="1.5"/>`+
+      jt(78,190,'A',-18,-8)+jt(183,135,'B',10,-10)+jt(250,190,'C',9,-12)+txt(104,48,'导杆',11,C.ht), vb:'20 28 320 195'
+},
+{
+  name:'六杆机构（曲柄摇杆 + 滑块）', q:'图示机构由曲柄摇杆机构串联连杆滑块组成：曲柄 AB 经连杆 BC 带动摇杆 CD 摆动，摇杆上的 E 点再经连杆 EF 驱动滑块 F 沿水平导路移动。',
+  n:5, pl:7, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 5 + 1 = <b>6</b>。',
+         '活动构件数 <b>n = 5</b>：曲柄 1、连杆 2、摇杆 3、连杆 4、滑块 5。',
+         '低副 <b>P_L = 7</b>：A、B、C、D、E、F 六个转动副 + 滑块与导路的移动副。',
+         'E 是摇杆 3 上的一个铰点，该处只有 2 个构件，不是复合铰链。'],
+  tip:'考点：复合机构逐段数构件与低副，别漏掉滑块的移动副。',
+  svg:()=>gnd(30,200,198)+sup(48,198,14)+sup(246,198,14)+rail(268,336,164)+
+      rod(48,198,104,140)+rod(104,140,186,96)+rod(186,96,246,198)+rod(213,141,298,153)+
+      slider(298,153,38,24)+
+      jt(48,198,'A',-18,-8)+jt(104,140,'B',9,-8)+jt(186,96,'C',-16,-8)+jt(246,198,'D',9,-12)+
+      jt(213,141,'E',-18,4)+jt(298,153,'F',10,-10), vb:'16 70 330 160'
+},
+{
+  name:'牛头刨床主体机构', q:'图示为牛头刨床的主体机构：曲柄 AB 转动，经滑块 B 带动导杆绕 C 摆动，导杆上的 D 点经连杆 DE 驱动刨头滑块 E 沿水平导路往复移动。',
+  n:5, pl:7, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 5 + 1 = <b>6</b>。',
+         '活动构件数 <b>n = 5</b>：曲柄 1、滑块 2、导杆 3、连杆 4、刨头滑块 5。',
+         '低副 <b>P_L = 7</b>：A、B、C、D、E 五个转动副 + 滑块与导杆的移动副 + 刨头与导路的移动副。',
+         '高副 <b>P_H = 0</b>。'],
+  tip:'考点：摆动导杆 + 连杆滑块串联，两处移动副都要计入。',
+  svg:()=>gnd(30,200,198)+sup(52,198,14)+sup(238,198,14)+rail(236,336,142)+
+      rod(238,198,56,100,9)+rod(52,198,125,137)+
+      `<polygon points="113.5,120.6 104.9,136.4 136.5,153.4 145.1,137.6" fill="#fff" stroke="${C.rod}" stroke-width="1.5"/>`+
+      rod(180,167,270,130)+
+      `<rect x="${270-19}" y="${130-12}" width="38" height="24" rx="2" fill="#fff" stroke="${C.rod}" stroke-width="1.6"/>`+
+      jt(52,198,'A',-18,-8)+jt(125,137,'B',10,-8)+jt(238,198,'C',9,-12)+jt(180,167,'D',-16,10)+jt(270,130,'E',10,-11),
+      vb:'16 78 330 150'
+},
+{
+  name:'凸轮机构（直动滚子从动件）', q:'图示为盘形凸轮机构，从动件端部装有可绕自身轴转动的滚子，滚子与凸轮轮廓保持接触。',
+  n:3, pl:3, ph:1, local:1, red:0, k:0,
+  steps:['构件总数 = 3 + 1 = <b>4</b>：凸轮、滚子、从动件、机架。',
+         '活动构件数 <b>n = 3</b>：凸轮 1、滚子 2、从动件 3。',
+         '低副 <b>P_L = 3</b>：凸轮与机架（转动副）、滚子与从动件（转动副）、从动件与机架（移动副）。',
+         '高副 <b>P_H = 1</b>：凸轮轮廓与滚子的接触。',
+         '滚子绕自身轴转动不影响从动件运动，属<b>局部自由度 1 处</b>。',
+         'F = 3×3 − 2×3 − 1 = 2，再减去局部自由度 1，<b>F = 1</b>。'],
+  tip:'考点：滚子自转是典型局部自由度，先除去再代入公式。',
+  svg:()=>cam(146,152,46,126,152)+
+      `<circle cx="146" cy="98" r="9" fill="#fff" stroke="${C.ink}" stroke-width="1.6"/>`+
+      rod(146,98,146,40,5)+
+      `<rect x="124" y="30" width="44" height="24" rx="2" fill="#fff" stroke="${C.rod}" stroke-width="1.6"/>`+
+      `<line x1="120" y1="30" x2="172" y2="30" stroke="${C.ink}" stroke-width="1.8"/>`+
+      [124,140,156,168].map(x=>`<line x1="${x}" y1="38" x2="${x+6}" y2="30" stroke="${C.ht}" stroke-width="1.1"/>`).join('')+
+      frame(126,152,214,22)+jt(146,98,'滚子',12,-4)+jt(126,152,'',0,0)+txt(50,152,'凸轮',10.5,C.ht)+txt(176,46,'从动件',10,C.ht),
+      vb:'20 20 320 210'
+},
+{
+  name:'六杆机构（含复合铰链）', q:'图示机构中，曲柄 AB 绕 A 转动，经连杆 BC 带动摇杆 CD 摆动；B 点还与连杆 BE 相连，由连杆 BE 驱动滑块 E 沿水平导路移动。注意 B 点的连接情况。',
+  n:5, pl:7, ph:0, local:0, red:0, k:1,
+  steps:['构件总数 = 5 + 1 = <b>6</b>。',
+         '活动构件数 <b>n = 5</b>：曲柄 AB、连杆 BC、摇杆 CD、连杆 BE、滑块 E。',
+         'B 点有 3 个构件汇交（AB、BC、BE），是<b>复合铰链 1 处</b>，该处含 2 个转动副。',
+         '低副 <b>P_L = 7</b>：A 处 1 个 + B 处 2 个 + C 处 1 个 + D 处 1 个 + E 处 1 个 + 滑块与导路 1 个。',
+         '高副 <b>P_H = 0</b>；无局部自由度、无虚约束。',
+         'F = 3×5 − 2×7 = <b>1</b>。'],
+  tip:'考点：m 个构件在同一处汇交，该处转动副数为 m−1；漏数复合铰链会把自由度算多。',
+  svg:()=>gnd(30,200,198)+sup(48,198,14)+sup(240,198,14)+rail(262,336,162)+
+      rod(48,198,104,140)+rod(104,140,186,96)+rod(186,96,240,198)+rod(104,140,292,150)+
+      slider(292,150,38,24)+
+      jt(48,198,'A',-18,-8)+bigjt(104,140,'B',-30,-14)+jt(186,96,'C',-16,-8)+jt(240,198,'D',9,-12)+jt(292,150,'E',10,-10)+
+      txt(118,120,'B 处三构件汇交',9.5,C.ht), vb:'16 78 330 155'
+},
+{
+  name:'凸轮机构（平底直动从动件）', q:'图示为盘形凸轮机构，从动件为平底（平底与凸轮轮廓接触），沿竖直导路移动。',
+  n:2, pl:2, ph:1, local:0, red:0, k:0,
+  steps:['构件总数 = 2 + 1 = <b>3</b>：凸轮、平底从动件、机架。',
+         '活动构件数 <b>n = 2</b>：凸轮 1、平底从动件 2。',
+         '低副 <b>P_L = 2</b>：凸轮与机架（转动副）、从动件与机架（移动副）。',
+         '高副 <b>P_H = 1</b>：平底与凸轮轮廓的接触。',
+         '平底从动件没有滚子，<b>无局部自由度</b>；F = 3×2 − 2×2 − 1 = <b>1</b>。'],
+  tip:'考点：平底接触是 1 个高副；与滚子从动件的区别在于没有局部自由度。',
+  svg:()=>cam(150,162,46,128,162)+
+      `<rect x="102" y="108" width="96" height="9" rx="2" fill="#fff" stroke="${C.rod}" stroke-width="1.6"/>`+
+      rod(150,108,150,44,5)+
+      `<rect x="126" y="30" width="48" height="22" rx="2" fill="#fff" stroke="${C.rod}" stroke-width="1.6"/>`+
+      [130,146,162,176].map(x=>`<line x1="${x}" y1="38" x2="${x+6}" y2="30" stroke="${C.ht}" stroke-width="1.1"/>`).join('')+
+      frame(128,162,214,22)+txt(52,158,'凸轮',10.5,C.ht)+txt(196,102,'平底',10,C.ht), vb:'20 20 320 210'
+},
+{
+  name:'移动凸轮机构', q:'图示为移动凸轮机构，凸轮作水平往复移动，其斜边推动从动件沿竖直导路移动。',
+  n:2, pl:2, ph:1, local:0, red:0, k:0,
+  steps:['构件总数 = 2 + 1 = <b>3</b>：移动凸轮、从动件、机架。',
+         '活动构件数 <b>n = 2</b>：移动凸轮 1、从动件 2。',
+         '低副 <b>P_L = 2</b>：凸轮与机架（移动副）、从动件与机架（移动副）。',
+         '高副 <b>P_H = 1</b>：斜边与从动件端部的接触。',
+         '两移动副方向不同（一水平、一竖直），<b>不构成虚约束</b>；F = <b>1</b>。'],
+  tip:'考点：移动副方向不同才不重复约束，同向重复才算虚约束。',
+  svg:()=>rail(30,325,212)+
+      `<polygon points="78,212 78,196 200,146 200,212" fill="${C.fill}" stroke="${C.ink}" stroke-width="1.6"/>`+
+      rod(152,166,152,44,5)+
+      `<rect x="128" y="30" width="48" height="22" rx="2" fill="#fff" stroke="${C.rod}" stroke-width="1.6"/>`+
+      `<line x1="124" y1="30" x2="180" y2="30" stroke="${C.ink}" stroke-width="1.8"/>`+
+      [130,146,162,174].map(x=>`<line x1="${x}" y1="38" x2="${x+6}" y2="30" stroke="${C.ht}" stroke-width="1.1"/>`).join('')+
+      txt(88,204,'移动凸轮',10,C.ht)+jt(152,166,'',0,0)+
+      `<line x1="248" y1="188" x2="284" y2="188" stroke="${C.ink}" stroke-width="1.8"/><polygon points="284,188 274,184 274,192" fill="${C.ink}"/>`,
+      vb:'20 20 320 210'
+},
+{
+  name:'外啮合圆柱齿轮机构', q:'图示为一对外啮合直齿圆柱齿轮，两齿轮分别固定在机架的轴上，通过轮齿啮合传递运动。',
+  n:2, pl:2, ph:1, local:0, red:0, k:0,
+  steps:['构件总数 = 2 + 1 = <b>3</b>：齿轮 1、齿轮 2、机架。',
+         '活动构件数 <b>n = 2</b>：两齿轮。',
+         '低副 <b>P_L = 2</b>：两齿轮与机架之间的转动副。',
+         '高副 <b>P_H = 1</b>：一对轮齿的啮合。',
+         'F = 3×2 − 2×2 − 1 = <b>1</b>。'],
+  tip:'考点：齿廓啮合是 1 个高副，不论同时有几对齿接触。',
+  svg:()=>gear(118,124,44,18,'1')+gear(206,124,44,18,'2')+hubfix(118,124)+hubfix(206,124)+
+      `<line x1="118" y1="124" x2="206" y2="124" stroke="${C.ht}" stroke-width="1" stroke-dasharray="4 4"/>`+
+      `<circle cx="162" cy="124" r="2.6" fill="${C.ink}"/>`+txt(162,72,'啮合点',9.5,C.ink,'middle'), vb:'40 55 300 165'
+},
+{
+  name:'齿轮齿条机构', q:'图示为齿轮齿条机构，齿轮绕固定轴转动，齿条在机架的导轨中作直线移动。',
+  n:2, pl:2, ph:1, local:0, red:0, k:0,
+  steps:['构件总数 = 2 + 1 = <b>3</b>：齿轮、齿条、机架。',
+         '活动构件数 <b>n = 2</b>：齿轮 1、齿条 2。',
+         '低副 <b>P_L = 2</b>：齿轮与机架（转动副）、齿条与机架（移动副）。',
+         '高副 <b>P_H = 1</b>：轮齿与齿条的啮合。',
+         'F = <b>1</b>，齿轮转动即带动齿条移动。'],
+  tip:'考点：齿条是移动构件，它与机架构成移动副而不是转动副。',
+  svg:()=>gear(146,120,44,18,'')+
+      `<rect x="86" y="166" width="120" height="30" fill="${C.fill}" stroke="${C.ink}" stroke-width="1.6"/>`+
+      Array.from({length:12},(_,i)=>86+6+i*10).map(x=>`<line x1="${x}" y1="158" x2="${x}" y2="166" stroke="${C.ink}" stroke-width="2.2"/>`).join('')+
+      rail(78,224,196)+hubfix(146,120)+txt(90,184,'齿条',10,C.ht), vb:'52 58 210 170'
+},
+{
+  name:'平行四边形机构（含虚约束）', q:'图示为平行四边形机构，AB、CD 等长且平行，BC 与 AD 等长且平行；为提高刚度又增加了一根与 BC 平行的附加杆 EF。',
+  n:3, pl:4, ph:0, local:0, red:1, k:0, alt:{total:[4,5], pl:[4,6], n:[3,4]},
+  steps:['若把附加杆 EF 也计入：构件总数 5、活动构件 4、低副 6，则 F = 3×4 − 2×6 = <b>0</b>，与实际不符。',
+         '原因：EF 与 AB、CD、BC 构成重复约束，杆 EF 及 E、F 两个转动副是<b>虚约束 1 处</b>。',
+         '计算前先除去虚约束：构件总数 <b>4</b>、活动构件 <b>3</b>、低副 <b>4</b>。',
+         'F = 3×3 − 2×4 = <b>1</b>。'],
+  tip:'考点：F 算出 0 或负值，通常说明存在虚约束，应先识别并除去。',
+  svg:()=>gnd(40,310,196)+sup(80,196,14)+sup(240,196,14)+
+      rod(80,196,80,110)+rod(80,110,240,110)+rod(240,110,240,196)+rod(80,153,240,153,4.5)+
+      jt(80,196,'A',-26,-6)+jt(80,110,'B',9,-8)+jt(240,110,'C',9,-8)+jt(240,196,'D',9,-12)+
+      jt(80,153,'E',-18,-2)+jt(240,153,'F',9,-2)+txt(124,143,'附加杆 EF',10,C.ht), vb:'28 88 320 145'
+},
+{
+  name:'偏心轮机构', q:'图示为偏心轮机构，圆盘的回转中心 A 与几何中心 B 不重合（偏心距 e），圆盘通过 B 处的铰点带动连杆 BC，驱动滑块 C 沿水平导路移动。',
+  n:3, pl:4, ph:0, local:0, red:0, k:0,
+  steps:['构件总数 = 3 + 1 = <b>4</b>：偏心轮、连杆、滑块、机架。',
+         '活动构件数 <b>n = 3</b>：偏心轮 1、连杆 2、滑块 3。',
+         '低副 <b>P_L = 4</b>：A 转动副、B 转动副、C 转动副、滑块与导路移动副。',
+         '高副 <b>P_H = 0</b>；F = <b>1</b>。偏心轮相当于一个很短的曲柄（曲柄半径 = 偏心距 e）。'],
+  tip:'考点：偏心轮本质是把曲柄做成圆盘，仍按曲柄滑块计算。',
+  svg:()=>gnd(30,180,198)+frame(126,142,214,22)+
+      `<circle cx="152" cy="142" r="40" fill="${C.fill}" stroke="${C.ink}" stroke-width="1.6"/>`+
+      `<circle cx="152" cy="142" r="40" fill="none" stroke="${C.ht}" stroke-width="1" stroke-dasharray="5 4"/>`+
+      rod(152,142,262,186)+slider(262,186,38,24)+rail(240,336,198)+
+      jt(126,142,'A',-26,-4)+jt(152,142,'B',10,-14)+jt(262,186,'C',10,-11)+
+      `<line x1="126" y1="142" x2="152" y2="142" stroke="${C.ht}" stroke-width="1.2" stroke-dasharray="4 3"/>`+
+      txt(132,158,'e',10,C.ht), vb:'16 76 320 155'
+}
+];
+
+/* 每题标准答案（8 项） */
+function answersOf(p){
+  return {total:p.n+1, n:p.n, red:p.red, local:p.local, k:p.k, pl:p.pl, ph:p.ph, F:3*p.n-2*p.pl-p.ph-p.local};
+}
+/* 允许的等价答案（如 P13 的虚约束两种数法） */
+function acceptOf(p,field){
+  const a=answersOf(p);
+  if(p.alt&&p.alt[field]) return p.alt[field].concat([a[field]]);
+  return [a[field]];
+}
+
+/* ---------- 稳定随机 ---------- */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)/4294967296}}
+function shuf(arr,seed){const r=mulberry32(seed);const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));const t=a[i];a[i]=a[j];a[j]=t}return a}
+
+const DAYS=14;
+const ORDER_A=shuf(MAT,20260123);
+const ORDER_B=shuf(MAT,778899);
+const CATS=[...new Set(MAT.map(x=>x.c))];
+const GRP={'碳素结构钢':'steel','低合金高强度结构钢':'steel','优质碳素结构钢':'steel','合金结构钢':'steel',
+ '弹簧钢':'steel','碳素工具钢':'steel','合金工具钢':'steel','高速钢':'steel','滚动轴承钢':'steel','不锈钢':'steel',
+ '灰铸铁':'cast','球墨铸铁':'cast','可锻铸铁':'cast',
+ '黄铜':'cu','青铜':'cu','轴承合金':'cu','铸造铝合金':'al','变形铝合金':'al','纯金属':'misc'};
+function grpOf(e){if(e.g==='1060')return 'al';if(e.g==='T2')return 'cu';return GRP[e.c]||'misc'}
+
+function pickDistractors(entry,field,seed,need){
+  const r=mulberry32(seed);
+  const g=grpOf(entry);
+  const same=MAT.filter(x=>x!==entry&&x.c===entry.c);
+  const near=MAT.filter(x=>x!==entry&&x.c!==entry.c&&grpOf(x)===g);
+  const other=MAT.filter(x=>grpOf(x)!==g);
+  const pool=[...shuf(same,Math.floor(r()*1e6)),...shuf(near,Math.floor(r()*1e6)+13),...shuf(other,Math.floor(r()*1e6)+57)];
+  const out=[];for(const p of pool){if(out.length>=need)break;if(field==='m'&&p.m===entry.m)continue;if(field==='g'&&p.g===entry.g)continue;out.push(field==='m'?p.m:p.g)}
+  return out;
+}
+function buildQuestion(kind,entry,seed){
+  const correct=kind==='A'?entry.m:entry.g;
+  const ds=pickDistractors(entry,kind==='A'?'m':'g',seed,3);
+  const mixed=shuf([correct,...ds],seed+7);
+  return {correct,options:mixed,ci:mixed.indexOf(correct)};
+}
+function dayItems(day){
+  const d=day-1,list=[];
+  for(let i=0;i<5;i++){
+    const e=ORDER_A[(d*5+i)%MAT.length];
+    const q=buildQuestion('A',e,d*37+i*7);
+    list.push(Object.assign({kind:'A',entry:e},q));
+  }
+  for(let i=0;i<5;i++){
+    const e=ORDER_B[(d*5+i)%MAT.length];
+    const q=buildQuestion('B',e,d*53+i*11+501);
+    list.push(Object.assign({kind:'B',entry:e},q));
+  }
+  const r=mulberry32(day*911+13);
+  for(let i=list.length-1;i>0;i--){const j=Math.floor(r()*(i+1));const t=list[i];list[i]=list[j];list[j]=t}
+  return list;
+}
+
+/* ---------- 状态 ---------- */
+const KEY='jxjc-checkin-v2';
+function initialState(){return {day:1,checkins:[],answers:{},blank:{},wrong:[],cur:{},startedAt:todayStr()}}
+function todayStr(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+const WEEK=['日','一','二','三','四','五','六'];
+function todayLabel(){const d=new Date();return `${d.getMonth()+1}月${d.getDate()}日 · 周${WEEK[d.getDay()]}`}
+let st=null;
+function load(){
+  try{const raw=localStorage.getItem(KEY);if(raw)return JSON.parse(raw)}catch(e){}
+  return initialState();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
+st=load();
+if(!st.startedAt){st.startedAt=todayStr();save()}
+if(!st.blank)st.blank={};if(!st.cur)st.cur={};
+if(!st.wrong)st.wrong=[];
+
+function streak(){
+  const dates=[...new Set(st.checkins.map(c=>c.date))].sort();
+  if(!dates.length)return 0;
+  const today=new Date(todayStr());
+  const gap=Math.round((today-new Date(dates[dates.length-1]))/86400000);
+  if(gap>1)return 0;
+  let n=1,cur=new Date(dates[dates.length-1]);
+  for(let i=dates.length-2;i>=0;i--){
+    const prev=new Date(dates[i]);
+    if(Math.round((cur-prev)/86400000)===1){n++;cur=prev}else break;
+  }
+  return n;
+}
+
+/* ---------- 渲染 ---------- */
+let tab='home';
+const view=document.getElementById('view');
+const hd=document.getElementById('hd');
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+reducedMotion.addEventListener('change',event=>{
+  if(event.matches)view.getAnimations().forEach(animation=>animation.cancel());
+});
+
+function renderHead(){
+  const day=Math.min(st.day,DAYS);
+  const titles={home:'每日练习',wrong:'错题本',lib:'牌号速查',me:'学习记录'};
+  const descriptions={
+    home:`${todayLabel()}，完成一道机构计算与十道材料选择。`,
+    wrong:'把易错的牌号留在这里，理解之后再移除。',
+    lib:'查含义、找用途，随时翻阅 46 个材料牌号。',
+    me:'每一次练习，都有迹可循。学习数据保存在当前浏览器。'
+  };
+  const dots=Array.from({length:DAYS},(_,i)=>{
+    const n=i+1;let cls='';
+    if(n<st.day)cls='done';
+    if(n===st.day&&st.day<=DAYS)cls='now';
+    return `<i class="${cls}" aria-hidden="true"></i>`;
+  }).join('');
+  hd.innerHTML=`
+    <div class="heading-row"><h1>${titles[tab]}</h1>
+      ${tab==='home'?`<div class="day-count">第 <strong>${day}</strong> 天</div>`:''}
+    </div>
+    <p class="page-description">${descriptions[tab]}</p>
+    <div class="overview">
+      <div class="progress-caption"><b>${st.checkins.length} / ${DAYS} 天已完成</b><span>连续 ${streak()} 天</span></div>
+      <div class="dots" role="progressbar" aria-label="学习计划完成进度" aria-valuemin="0" aria-valuemax="${DAYS}" aria-valuenow="${st.checkins.length}">${dots}</div>
+    </div>`;
+  document.title=`${titles[tab]} · 机械基础`;
+}
+
+const BLANK_DEF=[
+  ['total','构件总数',''],
+  ['n','活动构件数',''],
+  ['red','虚约束处数',''],
+  ['local','局部自由度',''],
+  ['k','复合铰链',''],
+  ['pl','低副数','P\u2097'],
+  ['ph','高副数','P\u2095'],
+  ['F','自由度','F']
+];
+
+function renderHome(){
+  if(st.day>DAYS){
+    view.innerHTML=`<div class="card done-card">
+      <h2 class="big">全部 ${DAYS} 天已完成</h2>
+      <p>题库走过一轮，建议回「错题本」重做一遍错题，<br>也可以重新开始一轮打卡。</p>
+      <div class="actions">
+        <button class="btn ghost" id="restart">重新开始</button>
+        <button class="btn sub" id="goWrong">去错题本</button>
+      </div></div>`;
+    document.getElementById('restart').onclick=()=>{
+      if(confirm('清空打卡进度与错题，重新开始一轮？')){st=initialState();save();render()}
+    };
+    document.getElementById('goWrong').onclick=()=>switchTab('wrong');
+    return;
+  }
+  const p=DOF[st.day-1];
+  const items=dayItems(st.day);
+  const blanks=st.blank[st.day]||{};
+  const checked=!!st.blank[st.day+'c'];
+
+  const blankHtml=BLANK_DEF.map(function(d){
+    const f=d[0],label=d[1],sub=d[2];
+    const val=blanks[f]!==undefined?blanks[f]:'';
+    let cls='blank',mk='';
+    if(checked){
+      const ok=val!=='' && acceptOf(p,f).some(a=>Math.abs(parseFloat(val)-a)<1e-6);
+      cls+=ok?' ok':' no';mk=ok?'正确':'有误';
+    }
+    return `<div class="${cls}" id="bk_${f}">
+      <label for="answer_${f}">${label}${sub?`<i>${sub}</i>`:''}</label>
+      <div class="r">
+        <input id="answer_${f}" type="number" step="any" inputmode="decimal" data-f="${f}" value="${val}" placeholder="—" aria-invalid="${checked&&mk==='有误'}">
+        <span class="mk">${mk}</span>
+      </div></div>`;
+  }).join('');
+
+  let mIdx=Math.min(st.cur[st.day]||0,9);
+
+  function oneQ(i){
+    const it=items[i],chosen=st.answers[st.day+':mq:'+i],done=chosen!==undefined;
+    const stem=it.kind==='A'
+      ? `牌号 <span class="g">${it.entry.g}</span> 表示（　）`
+      : `下列牌号中，表示「${it.entry.m}」的是（　）`;
+    const opts=it.options.map((o,k)=>{
+      let cls='opt',mk='';
+      if(done){
+        if(k===it.ci){cls+=' ok';mk='答案'}
+        else if(k===chosen){cls+=' no';mk='已选'}
+        else cls+=' dim';
+      }
+      return `<button class="${cls}" data-k="${k}" ${done?'disabled':''}><span class="lb">${'ABCD'[k]}</span><span>${o}</span><span class="mk">${mk}</span></button>`;
+    }).join('');
+    const fb=done?`<div class="fb on ${chosen===it.ci?'':'no'}">
+        <span class="hd">${chosen===it.ci?'回答正确':'回答错误，正确答案 '+'ABCD'[it.ci]}</span>
+        <span class="why">${it.entry.g}：${it.entry.m}。常用作 ${it.entry.u}。</span></div>`:'';
+    return `<div class="mq" id="mqc">
+      <div class="stem" tabindex="-1"><span class="txt">${stem}</span></div>
+      <div class="opts">${opts}</div>${fb}</div>`;
+  }
+
+  function dotsHtml(){
+    return items.map((it,i)=>{
+      const a=st.answers[st.day+':mq:'+i];
+      const cls='i'+(i===mIdx?' cur':'')+(a===undefined?'':(a===it.ci?' ok':' no'));
+      const status=a===undefined?'未作答':a===it.ci?'正确':'错误';
+      return `<button class="${cls}" data-j="${i}" aria-label="第 ${i+1} 题，${status}" ${i===mIdx?'aria-current="step"':''}>${i+1}</button>`;
+    }).join('');
+  }
+
+  function mqInner(){
+    const done=st.answers[st.day+':mq:'+mIdx]!==undefined;
+    const cnt=items.filter((it,i)=>st.answers[st.day+':mq:'+i]!==undefined).length;
+    return `<div class="tag"><h2 id="materialsTitle">材料牌号</h2><span class="cnt" id="mcount">已答 ${cnt} / 10</span></div>
+    <div class="qbar" role="group" aria-label="选择题目">${dotsHtml()}</div>
+    <div class="qnote">第 ${mIdx+1} / 10 题 · 点击题号可切换</div>
+    ${oneQ(mIdx)}
+    <div class="mnav">
+      <button class="navg" id="mPrev" ${mIdx===0?'disabled':''}>上一题</button>
+      <button class="navd" id="mNext" ${done&&mIdx<9?'':'disabled'}>${mIdx===9?'已是最后一题':'下一题'}</button>
+    </div>
+    <div class="finish">
+      <button class="btn sub" id="subBtn" aria-describedby="subHint" disabled>完成今日打卡</button>
+      <div class="goalline" id="subHint"></div>
+    </div>`;
+  }
+
+  function paintMq(){
+    mIdx=Math.min(st.cur[st.day]||0,9);
+    document.getElementById('mqCard').innerHTML=mqInner();
+    bindMq();
+    refreshSubmit();
+  }
+
+  function pick(k){
+    const key=st.day+':mq:'+mIdx;
+    if(st.answers[key]!==undefined)return;
+    const it=items[mIdx];
+    st.answers[key]=k;
+    if(k!==it.ci){
+      st.wrong.push({g:it.entry.g,m:it.entry.m,u:it.entry.u,day:st.day,
+        stem:it.kind==='A'?`牌号 ${it.entry.g} 表示`:`「${it.entry.m}」对应的牌号`,
+        chosen:it.options[k],correct:it.kind==='A'?it.entry.m:it.entry.g});
+    }
+    save();
+    paintMq();
+    document.getElementById('status').textContent=document.querySelector('.fb').textContent;
+    const next=document.getElementById('mNext');
+    (next.disabled?document.querySelector('.qbar .cur'):next).focus({preventScroll:true});
+  }
+
+  function bindMq(){
+    const card=document.getElementById('mqCard');
+    if(!card)return;
+    card.querySelectorAll('.opt').forEach(b=>{b.onclick=()=>pick(+b.dataset.k)});
+    card.querySelectorAll('.qbar button').forEach(d=>{
+      d.onclick=()=>{st.cur[st.day]=+d.dataset.j;save();paintMq();card.querySelector('.qbar .cur').focus({preventScroll:true})};
+    });
+    const pv=card.querySelector('#mPrev');
+    if(pv)pv.onclick=()=>{st.cur[st.day]=Math.max(0,mIdx-1);save();paintMq();card.querySelector('.stem').focus({preventScroll:true})};
+    const nx=card.querySelector('#mNext');
+    if(nx)nx.onclick=()=>{
+      if(st.answers[st.day+':mq:'+mIdx]===undefined)return;
+      st.cur[st.day]=Math.min(9,mIdx+1);save();paintMq();
+      card.querySelector('.stem').focus({preventScroll:true});
+    };
+    const sb=card.querySelector('#subBtn');
+    if(sb)sb.onclick=submitDay;
+  }
+
+  view.innerHTML=`
+  <div class="study-grid">
+  <section class="card" aria-labelledby="dofTitle">
+    <div class="tag"><h2 id="dofTitle">${p.name}</h2><span class="cnt">自由度 · 8 项填空</span></div>
+    <div class="svgwrap"><svg viewBox="${p.vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${p.name}机构示意图">${p.svg()}</svg></div>
+    <div class="qtext">${p.q}</div>
+    <div class="hint">逐项填写：构件总数含机架；注意看清构件的汇交处是几处、属于哪种铰链。</div>
+    <div class="blanks">${blankHtml}</div>
+    <button class="btn sub" id="dofCheck">核对答案</button>
+    <div class="sol" id="dofSol" aria-live="polite"></div>
+  </section>
+
+  <section class="card" id="mqCard" aria-labelledby="materialsTitle">${mqInner()}</section>
+  </div>`;
+
+  /* --- 填空 --- */
+  const sol=document.getElementById('dofSol');
+  view.querySelectorAll('.blank input').forEach(inp=>{
+    inp.oninput=()=>{
+      if(!st.blank[st.day])st.blank[st.day]={};
+      st.blank[st.day][inp.dataset.f]=inp.value;
+      delete st.blank[st.day+'c'];
+      save();
+      const box=inp.closest('.blank');
+      box.className='blank';
+      box.querySelector('.mk').textContent='';
+      inp.setAttribute('aria-invalid','false');
+      sol.classList.remove('on');
+      refreshSubmit();
+    };
+  });
+
+  function showSol(){
+    const cur=st.blank[st.day]||{};
+    const filled=BLANK_DEF.filter(d=>cur[d[0]]!==undefined&&cur[d[0]]!=='').length;
+    if(!filled){view.querySelector('.blank input').focus();return}
+    let right=0;
+    BLANK_DEF.forEach(function(d){
+      const f=d[0],el=document.getElementById('bk_'+f),v=cur[f];
+      const ok=v!==undefined&&v!==''&&acceptOf(p,f).some(a=>Math.abs(parseFloat(v)-a)<1e-6);
+      el.className='blank '+(ok?'ok':'no');
+      el.querySelector('.mk').textContent=ok?'正确':'有误';
+      el.querySelector('input').setAttribute('aria-invalid',String(!ok));
+      if(ok)right++;
+    });
+    st.blank[st.day+'c']=1;save();
+    const a=answersOf(p);
+    const base=3*p.n-2*p.pl-p.ph;
+    const line2=p.local
+      ? `= 3×${p.n} − 2×${p.pl} − ${p.ph} = ${base}　→　${base} − ${p.local} = ${a.F}`
+      : `= 3×${p.n} − 2×${p.pl} − ${p.ph} = ${a.F}${p.red?'　（已除去虚约束）':''}`;
+    sol.innerHTML=`<div class="verdict ${right===8?'ok':'bad'}">填对 ${right} / 8 空 · 参考答案</div>
+      <div class="formula">
+        <b>构件总数 N = n + 1 = ${a.total}</b>
+        <b>n = ${a.n}　虚约束 ${a.red} 处　局部自由度 ${a.local} 处　复合铰链 ${a.k} 处</b>
+        <b>P_L = ${a.pl}　P_H = ${a.ph}</b>
+        <b>F = 3n − 2P_L − P_H ${line2}</b>
+      </div>
+      <ul class="steps">${p.steps.map(s=>`<li>${s}</li>`).join('')}</ul>
+      <div class="tipbox">${p.tip}</div>`;
+    sol.classList.add('on');
+    refreshSubmit();
+  }
+  document.getElementById('dofCheck').onclick=showSol;
+  if(checked)showSol();
+
+  /* --- 选择题（逐题，绑定见 bindMq） --- */
+
+  function refreshSubmit(){
+    const btn=document.getElementById('subBtn');if(!btn)return;
+    const done=items.filter((it,i)=>st.answers[st.day+':mq:'+i]!==undefined).length;
+    const dofDone=!!st.blank[st.day+'c'];
+    btn.disabled=!(done===10&&dofDone);
+    document.getElementById('subHint').textContent=(done===10&&dofDone)
+      ?'两项任务均已完成，可以打卡'
+      :((10-done>0?`还差 ${10-done} 道选择题`:'选择题已答完')+(dofDone?'':'　＋　还差自由度填空核对'));
+  }
+  refreshSubmit();
+
+  function submitDay(){
+    const right=items.filter((it,i)=>st.answers[st.day+':mq:'+i]===it.ci).length;
+    const p2=DOF[st.day-1];
+    const cur=st.blank[st.day]||{};
+    const dofRight=BLANK_DEF.filter(function(d){
+      const f=d[0],v=cur[f];
+      return v!==undefined&&v!==''&&acceptOf(p2,f).some(a=>Math.abs(parseFloat(v)-a)<1e-6);
+    }).length;
+    st.checkins.push({day:st.day,date:todayStr(),dof:dofRight,score:right});
+    const finished=st.day;
+    st.day=Math.min(st.day+1,DAYS+1);
+    save();
+    showFinishModal(finished,right,dofRight);
+  }
+  bindMq();
+}
+
+function showFinishModal(day,right,dofRight){
+  const mask=document.getElementById('mask'),modal=document.getElementById('modal');
+  const all=day>=DAYS;
+  modal.innerHTML=`
+    <div class="mark">今日练习已记录</div>
+    <h3 id="finishTitle">第 ${day} 天打卡完成</h3>
+    <div class="score">${right}<span> / 10</span></div>
+    <p>牌号题正确率 ${right*10}%　·　自由度填空填对 ${dofRight} / 8<br>
+    ${all?'14 天全部完成，去错题本再巩固一轮吧。':'已记入今天的打卡，下一套已解锁，可继续加练，也可明天再来。'}</p>
+    <div class="row">
+      <button class="btn ghost" id="mWrong">看错题</button>
+      <button class="btn sub" id="mOk">${all?'完成学习':'继续练习'}</button>
+    </div>`;
+  const nav=document.querySelector('nav');
+  document.getElementById('app').inert=true;
+  nav.inert=true;
+  document.querySelector('.skip').inert=true;
+  document.body.classList.add('modal-open');
+  mask.inert=false;
+  mask.classList.add('on');
+  function close(destination='home'){
+    mask.classList.remove('on');mask.inert=true;
+    document.getElementById('app').inert=false;
+    nav.inert=false;
+    document.querySelector('.skip').inert=false;
+    document.body.classList.remove('modal-open');
+    switchTab(destination);
+    const target=destination==='home'?document.getElementById('dofCheck'):null;
+    (target||document.querySelector('nav button.on')).focus({preventScroll:true});
+  }
+  document.getElementById('mOk').onclick=()=>close();
+  document.getElementById('mWrong').onclick=()=>close('wrong');
+  mask.onclick=e=>{if(e.target===mask)close()};
+  mask.onkeydown=e=>{
+    if(e.key==='Escape'){e.preventDefault();close();return}
+    if(e.key!=='Tab')return;
+    const buttons=[...modal.querySelectorAll('button')];
+    const first=buttons[0],last=buttons[buttons.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
+  };
+  document.getElementById('mOk').focus({preventScroll:true});
+}
+
+/* ---- 错题本 ---- */
+function renderWrong(){
+  const list=st.wrong;
+  if(!list.length){
+    view.innerHTML=`<div class="empty"><h2>还没有错题</h2><p>做错的牌号题会自动收进这里，方便集中复习。</p><button class="btn ghost" id="practice">去做今日练习</button></div>`;
+    document.getElementById('practice').onclick=()=>switchTab('home');
+    return;
+  }
+  view.innerHTML=`<h2 class="sec-title">待巩固 ${list.length} 条</h2><div class="card">
+    ${list.map((w,i)=>`<div class="wq">
+      <button class="del" data-i="${i}">移除</button>
+      <div class="s">${w.stem}</div>
+      <div class="a">你的答案：${w.chosen}<br>正确：<em>${w.correct}</em><br>${w.g} 常用作 ${w.u}</div>
+    </div>`).join('')}
+  </div>`;
+  view.querySelectorAll('.del').forEach(b=>{
+    b.onclick=()=>{
+      const index=+b.dataset.i;
+      st.wrong.splice(index,1);save();renderWrong();
+      document.getElementById('status').textContent=`已移除错题，还剩 ${st.wrong.length} 条`;
+      const buttons=view.querySelectorAll('.del');
+      (buttons[Math.min(index,buttons.length-1)]||document.getElementById('practice')).focus({preventScroll:true});
+    };
+  });
+}
+
+/* ---- 牌号速查 ---- */
+let libQ='';
+function renderLib(){
+  view.innerHTML=`
+    <div class="search-panel"><label class="search-label" for="libSearch">搜索材料</label>
+      <input class="search" id="libSearch" type="search" placeholder="试试 Q235、黄铜或齿轮" autocomplete="off" aria-describedby="libCount">
+      <p class="search-meta" id="libCount" role="status"></p>
+    </div>
+    <div id="libResults"></div>
+    <p class="note">共 ${MAT.length} 个牌号，覆盖教材第二模块 2.2 钢铁材料与 2.3 非铁金属。牌号规则依据 GB/T 221《钢铁产品牌号表示方法》。</p>`;
+  const inp=document.getElementById('libSearch');
+  inp.value=libQ;
+  function updateResults(){
+    const query=libQ.trim().toLowerCase();
+    const filtered=MAT.filter(x=>[x.g,x.m,x.c,x.u].some(value=>value.toLowerCase().includes(query)));
+    const groups=CATS.map(c=>{
+      const items=filtered.filter(x=>x.c===c);
+      if(!items.length)return '';
+      return `<section><h2 class="sec-title">${c} · ${items.length}</h2><div class="card">${
+        items.map(x=>`<div class="lib-item"><div class="grade">${x.g}<span>${x.c}</span></div>
+          <div><div class="m">${x.m}</div><div class="u">常用：${x.u}</div></div></div>`).join('')
+      }</div></section>`;
+    }).join('');
+    document.getElementById('libResults').innerHTML=filtered.length?groups:'<div class="empty"><h2>没有匹配的牌号</h2><p>换个牌号、材料名称或用途再试试。</p></div>';
+    document.getElementById('libCount').textContent=`显示 ${filtered.length} / ${MAT.length} 个牌号`;
+  }
+  inp.oninput=()=>{libQ=inp.value;updateResults()};
+  updateResults();
+}
+
+/* ---- 我的 ---- */
+function renderMe(){
+  const done=st.checkins.length;
+  const total=st.checkins.reduce((a,c)=>a+c.score,0);
+  const avg=done?Math.round(total/(done*10)*100):0;
+  const dofSum=st.checkins.reduce((a,c)=>a+c.dof,0);
+  const recs=st.checkins.slice().reverse().map(c=>`<div class="rec"><span>第 ${c.day} 天 · ${c.date}</span><span class="sc">${c.score}/10　填空 ${c.dof}/8</span></div>`).join('');
+  view.innerHTML=`
+    <h2 class="sec-title">学习统计</h2>
+    <div class="stat-grid">
+      <div class="stat"><div class="v">${done}<span class="sr-only">天</span></div><div class="k">已打卡天数</div></div>
+      <div class="stat"><div class="v">${avg}%</div><div class="k">牌号正确率</div></div>
+      <div class="stat"><div class="v">${done?Math.round(dofSum/(done*8)*100):0}%</div><div class="k">填空正确率</div></div>
+    </div>
+    <h2 class="sec-title">打卡记录</h2>
+    <div class="card">${recs||'<p class="note">完成今日练习后，第一条记录就会出现在这里。</p>'}</div>
+    <h2 class="sec-title">题库说明</h2>
+    <div class="card">
+      <div class="note notes">
+      <p>自由度题：14 道平面机构，黑白线稿。每题按「构件总数／活动构件数／虚约束／局部自由度／复合铰链／低副数／高副数／自由度」8 项填空；覆盖曲柄滑块、铰链四杆、五杆、摆动导杆、六杆复合、复合铰链、凸轮（滚子／平底／移动凸轮）、齿轮与齿条、平行四边形虚约束、偏心轮。</p>
+      <p>牌号题：46 个牌号，两种问法各占 50%，干扰项优先取自同类、同族材料。</p>
+      <p>每日题目按固定种子生成，同一设备每次打开题目不变。</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>数据管理</h2><p class="note">记录仅保存在当前浏览器，建议定期导出备份。</p>
+      <div class="actions">
+      <button class="btn ghost" id="exp">导出记录</button>
+      <button class="btn ghost danger" id="clr">清空数据</button>
+      </div>
+    </div>`;
+  document.getElementById('exp').onclick=()=>{
+    const data={startedAt:st.startedAt,checkins:st.checkins,wrong:st.wrong};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const a=document.createElement('a'),url=URL.createObjectURL(blob);
+    a.href=url;a.download='机械基础打卡记录.json';document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
+  document.getElementById('clr').onclick=()=>{
+    if(confirm('清空全部打卡进度、答案与错题？此操作不可恢复。')){
+      st=initialState();save();render();
+      document.getElementById('status').textContent='学习数据已清空，可以重新开始练习';
+      document.getElementById('clr').focus({preventScroll:true});
+    }
+  };
+}
+
+/* ---- 切换 ---- */
+function switchTab(t){
+  tab=t;
+  document.querySelectorAll('nav button').forEach(b=>{
+    const active=b.dataset.tab===t;
+    b.classList.toggle('on',active);
+    if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+  });
+  render();
+}
+function render(){
+  renderHead();
+  if(tab==='home')renderHome();
+  else if(tab==='wrong')renderWrong();
+  else if(tab==='lib')renderLib();
+  else renderMe();
+  view.getAnimations().forEach(animation=>animation.cancel());
+  if(!reducedMotion.matches){
+    view.animate([{opacity:.65,transform:'translateY(6px)'},{opacity:1,transform:'translateY(0)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
+  }
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('nav button').forEach(b=>{b.onclick=()=>switchTab(b.dataset.tab)});
+render();
+</script>
+</body>
+</html>

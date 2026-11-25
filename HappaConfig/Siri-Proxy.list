@@ -1,0 +1,23 @@
+# 13 条代理规则；引用时指定代理策略组。
+# 放在 Apple 通用直连规则之前；Siri 基础服务由 Siri-Direct.list 指定直连。
+
+# Siri / Apple Intelligence
+DOMAIN,gateway.icloud.com
+DOMAIN,probe.icloud.com
+DOMAIN,metrics.icloud.com
+
+# Apple Intelligence / Private Cloud Compute
+DOMAIN,apple-relay.apple.com
+DOMAIN,apple-relay.cloudflare.com
+DOMAIN,apple-relay.fastly-edge.com
+DOMAIN,cp4.cloudflare.com
+
+# Apple Intelligence relay / bootstrap
+DOMAIN,apple-relay.mask.apple-dns.net
+DOMAIN,mask-api.icloud.com
+DOMAIN,mask-api.fe2.apple-dns.net
+DOMAIN,apple-relay.akamaized.net
+DOMAIN,apple-carry-relay.cloudflare.com
+
+# Apple region determination
+DOMAIN,gspe1-ssl.ls.apple.com

@@ -1,0 +1,7 @@
+# Siri 基础服务；引用时指定 DIRECT，放在 Apple 通用规则之前。
+# 来源：https://github.com/Kianuni/AppleFlow/blob/main/rules/surge/Siri-Direct.list
+DOMAIN-SUFFIX,guzzoni.apple.com
+DOMAIN-SUFFIX,siri.apple.com
+DOMAIN,dejavu.apple.com
+DOMAIN,sequoia.apple.com
+DOMAIN-SUFFIX,smoot.apple.com
